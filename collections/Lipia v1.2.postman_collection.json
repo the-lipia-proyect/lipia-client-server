@@ -79,6 +79,38 @@
 								}
 							},
 							"response": []
+						},
+						{
+							"name": "voices",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"text\":\"Hola\",\r\n    \"voice_id\":\"zOfRKg7XaHu4YkH2dvBt\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:5000/api/v1/management/voices/text-to-speech",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "5000",
+									"path": [
+										"api",
+										"v1",
+										"management",
+										"voices",
+										"text-to-speech"
+									]
+								}
+							},
+							"response": []
 						}
 					]
 				},
