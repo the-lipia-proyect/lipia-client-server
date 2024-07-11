@@ -1,5 +1,5 @@
 flask
-tensorflow-cpu
-numpy
 flask_cors
 aws-wsgi
+elevenlabs
+python-dotenv
