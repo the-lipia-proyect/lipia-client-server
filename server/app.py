@@ -18,6 +18,7 @@ app.register_blueprint(management_bp)
 
 
 def lambda_handler(event, context):
+    print("EVENT", event)
     return awsgi.response(app, event, context)
 
 

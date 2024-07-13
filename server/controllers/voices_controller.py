@@ -24,7 +24,7 @@ AUDIO_FILES_PATH = "prediction_audios"
 s3_client = S3Utils(os.getenv("S3_BUCKET_NAME", "lipia"))
 
 
-@bp.route("/", methods=[http.HTTPMethod.GET])
+@bp.route(None, methods=[http.HTTPMethod.GET])
 def get():
     headers = {
         "Accept": "application/json",

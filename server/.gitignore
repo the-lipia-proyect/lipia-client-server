@@ -1,3 +1,7 @@
 .venv
 *.pyc
 .env
+app.zip
+lambda_layer.zip
+lambda_layer/*
+python/*
