@@ -6,9 +6,12 @@ import numpy as np
 LABEL_DICT = {0: "boludo", 1: "chau", 2: "hola", 3: "vos", 4: "yo"}
 LIP_WIDTH = 112
 LIP_HEIGHT = 80
+
+
 def get_chino_model():
-    model = tf.keras.models.load_model("./model/cmodel_01_07_2024.h5")
+    model = tf.keras.models.load_model("./model/cmodel_x2_augmentation_3.h5")
     return model
+
 
 def get_old_chino_model():
     return None
@@ -48,15 +51,15 @@ def get_old_chino_model():
     # )
     # return model
 
-MODELS = {
-    "CHINO": get_chino_model(),
-    "OLD_CHINO": get_old_chino_model()
-}
 
-VALID_MODELS = ["CHINO","OLD_CHINO"]
-def load_model(model: str ="CHINO"):
+MODELS = {"CHINO": get_chino_model(), "OLD_CHINO": get_old_chino_model()}
+
+VALID_MODELS = ["CHINO", "OLD_CHINO"]
+
+
+def load_model(model: str = "CHINO"):
     model = model.upper()
-    with tf.device('/cpu:0'):
+    with tf.device("/cpu:0"):
         if model not in VALID_MODELS:
             raise Exception(f"The model {model} does not exist")
         return MODELS[model]
@@ -76,7 +79,4 @@ def translate_prediction(prediction):
         if prob > maxProb:
             maxProb = prob
             maxLabel = label
-    return {
-        "label": maxLabel,
-        "probability": str(maxProb)
-    }
+    return {"label": maxLabel, "probability": str(maxProb)}
