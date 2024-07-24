@@ -3,7 +3,7 @@ from flask_cors import CORS
 import awsgi
 from dotenv import load_dotenv
 
-from controllers import health_controller, voices_controller
+from controllers import health_controller, voices_controller, auth_controller
 
 load_dotenv()
 API_VERSION = "v1"
@@ -14,6 +14,7 @@ management_bp = Blueprint(
 )
 management_bp.register_blueprint(health_controller.bp)
 management_bp.register_blueprint(voices_controller.bp)
+management_bp.register_blueprint(auth_controller.bp)
 app.register_blueprint(management_bp)
 
 
