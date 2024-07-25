@@ -8,6 +8,7 @@ from elevenlabs.client import ElevenLabs
 
 from utils.api_caller import api_caller
 from utils.s3_connector import S3Utils
+from utils.responses_helper import ok, bad_request, internal_server_error
 
 
 bp = Blueprint("voices", __name__, url_prefix="/voices")
@@ -43,19 +44,19 @@ def get():
             for item in response["voices"]
         ]
     }
-    return jsonify(voices), http.HTTPStatus.OK
+
+    return ok(voices)
 
 
 @bp.route("/text-to-speech", methods=[http.HTTPMethod.POST])
 def post():
     body = request.get_json()
-    text = body.get("text", "")
+    text = body.get("text")
     voice_id = body.get("voice_id")
-    if voice_id is None:
-        return (
-            jsonify({"message": "Invalid body: missing 'voice_id' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+    if not text:
+        return bad_request({"message": "Invalid body: missing 'text' key"})
+    if not voice_id:
+        return bad_request({"message": "Invalid body: missing 'voice_id' key"})
     try:
         text_to_speech_response = eleven_labs_client.text_to_speech.convert(
             voice_id=voice_id,
@@ -85,6 +86,6 @@ def post():
             file_full_path,
         )
         response = {"file_url": presigned_url}
-        return jsonify(response), http.HTTPStatus.OK
+        return ok(response)
     except Exception as e:
-        return jsonify({"message": e.__str__()}), http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return internal_server_error({"message": e.__str__()})

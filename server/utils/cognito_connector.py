@@ -183,6 +183,36 @@ class CognitoUtils:
         except ClientError as error:
             raise error
 
+    def change_password(
+        self, access_token: str, new_password: str, actual_password: str
+    ) -> None:
+        """Changes the password for a Cognito user asynchronously.
+
+        Args:
+            access_token (str): The user's access token.
+            new_password (str): The new password for the user.
+            actual_password (str): The user's current password.
+
+        Raises:
+            ClientError: If there are errors interacting with the Cognito service.
+        """
+
+        try:
+            change_password_request = {
+                "AccessToken": access_token,
+                "ProposedPassword": new_password,
+                "PreviousPassword": actual_password,
+            }
+            response = self._cognito_client.change_password(
+                ChangePasswordRequest=change_password_request
+            )
+            print("Password changed successfully!")
+            return response
+
+        except ClientError as error:
+            print(f"Error changing password: {error}")
+            raise error
+
     def get_secret_hash(self, email: str):
         hashed_cognito_secret = bytes(COGNITO_SECRET, "utf-8")
         message = bytes(f"{email}{self._client_id}", "utf-8")

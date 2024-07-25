@@ -1,9 +1,10 @@
 import http
 import os
 
-from flask import jsonify, Blueprint, request
+from flask import Blueprint, request
 
 from utils.cognito_connector import CognitoUtils
+from utils.responses_helper import ok, bad_request, internal_server_error
 
 cognito_utils = CognitoUtils(
     os.getenv("AWS_COGNITO_USERS_POOL_ID"), os.getenv("AWS_COGNITO_USERS_CLIENT_ID")
@@ -20,15 +21,9 @@ def login():
     )
     password = body.get("password")
     if not username:
-        return (
-            jsonify({"message": "Invalid body: missing 'username' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'username' key"})
     if not password:
-        return (
-            jsonify({"message": "Invalid body: missing 'password' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'password' key"})
     try:
         authenticate_user_response = cognito_utils.authenticate_user(username, password)
         response = {
@@ -40,9 +35,9 @@ def login():
                 "token_type": authenticate_user_response.get("TokenType"),
             }
         }
-        return jsonify(response), http.HTTPStatus.OK
+        return ok(response)
     except Exception as e:
-        return jsonify({"message": e.__str__()}), http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return internal_server_error({"message": e.__str__()})
 
 
 @bp.route("/users/sign-up", methods=[http.HTTPMethod.POST])
@@ -57,25 +52,17 @@ def sign_up():
     username = body.get("username")
     password = body.get("password")
     if not name:
-        return (
-            jsonify({"message": "Invalid body: missing 'name' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'name' key"})
     if not surname:
-        return (
-            jsonify({"message": "Invalid body: missing 'surname' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'surname' key"})
     if not phone_number:
-        return (
-            jsonify({"message": "Invalid body: missing 'phone_number' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'phone_number' key"})
     if not email:
-        return (
-            jsonify({"message": "Invalid body: missing 'email' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'email' key"})
+    if not username:
+        return bad_request({"message": "Invalid body: missing 'username' key"})
+    if not password:
+        return bad_request({"message": "Invalid body: missing 'password' key"})
 
     register_user_dto = {
         "name": name,
@@ -87,10 +74,9 @@ def sign_up():
     }
     try:
         user_id = cognito_utils.register_user(register_user_dto)
-        response = {"id": user_id}
-        return jsonify(response), http.HTTPStatus.OK
+        return ok({"id": user_id})
     except Exception as e:
-        return jsonify({"message": e.__str__()}), http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return internal_server_error({"message": e.__str__()})
 
 
 @bp.route(
@@ -102,16 +88,13 @@ def resend_email_confirmation_code():
         "email",
     )
     if not email:
-        return (
-            jsonify({"message": "Invalid body: missing 'email' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'email' key"})
 
     try:
         cognito_utils.resend_confirmation_code(email)
-        return jsonify({}), http.HTTPStatus.OK
+        return ok({})
     except Exception as e:
-        return jsonify({"message": e.__str__()}), http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return internal_server_error({"message": e.__str__()})
 
 
 @bp.route("/users/email-verification", methods=[http.HTTPMethod.POST])
@@ -122,21 +105,15 @@ def verify_email():
     )
     code = body.get("code")
     if not email:
-        return (
-            jsonify({"message": "Invalid body: missing 'email' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'email' key"})
     if not code:
-        return (
-            jsonify({"message": "Invalid body: missing 'code' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'code' key"})
 
     try:
         cognito_utils.verify_user(email, code)
-        return jsonify({}), http.HTTPStatus.OK
+        return ok({})
     except Exception as e:
-        return jsonify({"message": e.__str__()}), http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return internal_server_error({"message": e.__str__()})
 
 
 @bp.route("/users/refresh-token", methods=[http.HTTPMethod.POST])
@@ -146,17 +123,14 @@ def refresh_token():
         "refresh_token",
     )
     if not refresh_token:
-        return (
-            jsonify({"message": "Invalid body: missing 'refresh_token' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'refresh_token' key"})
 
     try:
         refresh_token_response = cognito_utils.refresh_token(refresh_token)
         print("REFRESH_TOKEN_RESPONSE", refresh_token_response)
-        return jsonify({}), http.HTTPStatus.OK
+        return ok({})
     except Exception as e:
-        return jsonify({"message": e.__str__()}), http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return internal_server_error({"message": e.__str__()})
 
 
 @bp.route("/users/forgot-password", methods=[http.HTTPMethod.POST])
@@ -166,16 +140,13 @@ def forgot_password():
         "username",
     )
     if not username:
-        return (
-            jsonify({"message": "Invalid body: missing 'username' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'username' key"})
 
     try:
         cognito_utils.forgot_password(username)
-        return jsonify({}), http.HTTPStatus.OK
+        return ok({})
     except Exception as e:
-        return jsonify({"message": e.__str__()}), http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return internal_server_error({"message": e.__str__()})
 
 
 @bp.route("/users/forgot-password/confirmation", methods=[http.HTTPMethod.POST])
@@ -187,22 +158,34 @@ def forgot_password_confirmation():
     password = body.get("password")
     code = body.get("code")
     if not username:
-        return (
-            jsonify({"message": "Invalid body: missing 'username' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'username' key"})
     if not password:
-        return (
-            jsonify({"message": "Invalid body: missing 'password' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'password' key"})
     if not code:
-        return (
-            jsonify({"message": "Invalid body: missing 'code' key"}),
-            http.HTTPStatus.BAD_REQUEST,
-        )
+        return bad_request({"message": "Invalid body: missing 'code' key"})
     try:
         cognito_utils.confirm_forgot_password(username, password, code)
-        return jsonify({}), http.HTTPStatus.OK
+        return ok({})
     except Exception as e:
-        return jsonify({"message": e.__str__()}), http.HTTPStatus.INTERNAL_SERVER_ERROR
+        return internal_server_error({"message": e.__str__()})
+
+
+@bp.route("/users/change-password", methods=[http.HTTPMethod.POST])
+def change_password():
+    body = request.get_json()
+    new_password = body.get(
+        "new_password",
+    )
+    actual_password = body.get(
+        "actual_password",
+    )
+    if not new_password:
+        return bad_request({"message": "Invalid body: missing 'new_password' key"})
+    if not actual_password:
+        return bad_request({"message": "Invalid body: missing 'actual_password' key"})
+    try:
+        # TODO: Add auth token as the first parameter
+        cognito_utils.change_password("", new_password, actual_password)
+        return ok({})
+    except Exception as e:
+        return internal_server_error({"message": e.__str__()})

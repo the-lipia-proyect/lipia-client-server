@@ -1,10 +1,11 @@
 from flask import jsonify, Blueprint
 import http
 
+from utils.responses_helper import ok
+
 bp = Blueprint("health", __name__, url_prefix="/health")
 
 
 @bp.route(None, methods=[http.HTTPMethod.GET])
 def health():
-    response = {"message": "Healthy"}
-    return jsonify(response), http.HTTPStatus.OK
+    return ok({"message": "Healthy"})
