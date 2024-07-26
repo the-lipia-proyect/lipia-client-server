@@ -5,6 +5,11 @@ from flask import Blueprint, request
 
 from utils.cognito_connector import CognitoUtils
 from utils.responses_helper import ok, bad_request, internal_server_error
+from utils.auth_helper import (
+    token_required,
+    get_access_token,
+    get_username_from_token,
+)
 
 cognito_utils = CognitoUtils(
     os.getenv("AWS_COGNITO_USERS_POOL_ID"), os.getenv("AWS_COGNITO_USERS_CLIENT_ID")
@@ -117,18 +122,28 @@ def verify_email():
 
 
 @bp.route("/users/refresh-token", methods=[http.HTTPMethod.POST])
+@token_required
 def refresh_token():
     body = request.get_json()
     refresh_token = body.get(
         "refresh_token",
     )
+    access_token = get_access_token()
+    username = get_username_from_token(access_token)
     if not refresh_token:
         return bad_request({"message": "Invalid body: missing 'refresh_token' key"})
 
     try:
-        refresh_token_response = cognito_utils.refresh_token(refresh_token)
-        print("REFRESH_TOKEN_RESPONSE", refresh_token_response)
-        return ok({})
+        refresh_token_response = cognito_utils.refresh_token(username, refresh_token)
+        response = {
+            "auth": {
+                "access_token": refresh_token_response.get("AccessToken"),
+                "expiration_date": refresh_token_response.get("ExpiresIn"),
+                "id_token": refresh_token_response.get("IdToken"),
+                "token_type": refresh_token_response.get("TokenType"),
+            }
+        }
+        return ok(response)
     except Exception as e:
         return internal_server_error({"message": e.__str__()})
 
@@ -171,6 +186,7 @@ def forgot_password_confirmation():
 
 
 @bp.route("/users/change-password", methods=[http.HTTPMethod.POST])
+@token_required
 def change_password():
     body = request.get_json()
     new_password = body.get(
@@ -179,13 +195,18 @@ def change_password():
     actual_password = body.get(
         "actual_password",
     )
+    access_token = get_access_token()
     if not new_password:
         return bad_request({"message": "Invalid body: missing 'new_password' key"})
     if not actual_password:
         return bad_request({"message": "Invalid body: missing 'actual_password' key"})
     try:
         # TODO: Add auth token as the first parameter
-        cognito_utils.change_password("", new_password, actual_password)
+        cognito_utils.change_password(
+            access_token,
+            new_password,
+            actual_password,
+        )
         return ok({})
     except Exception as e:
         return internal_server_error({"message": e.__str__()})

@@ -1,14 +1,16 @@
-from flask import jsonify, Blueprint, request
 import http
 import os
 import uuid
 from io import BytesIO
+
+from flask import Blueprint, request
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 
 from utils.api_caller import api_caller
 from utils.s3_connector import S3Utils
 from utils.responses_helper import ok, bad_request, internal_server_error
+from utils.auth_helper import token_required
 
 
 bp = Blueprint("voices", __name__, url_prefix="/voices")
@@ -26,7 +28,8 @@ s3_client = S3Utils(os.getenv("S3_BUCKET_NAME", "lipia"))
 
 
 @bp.route(None, methods=[http.HTTPMethod.GET])
-def get():
+@token_required
+def get_voices():
     headers = {
         "Accept": "application/json",
         "xi-api-key": os.getenv("ELEVEN_LABS_API_KEY"),
@@ -49,7 +52,8 @@ def get():
 
 
 @bp.route("/text-to-speech", methods=[http.HTTPMethod.POST])
-def post():
+@token_required
+def generate_audio_file():
     body = request.get_json()
     text = body.get("text")
     voice_id = body.get("voice_id")

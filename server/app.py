@@ -5,10 +5,13 @@ from dotenv import load_dotenv
 
 from controllers import health_controller, voices_controller, auth_controller
 
+
 load_dotenv()
+
 API_VERSION = "v1"
 app = Flask(__name__)
 CORS(app)
+
 management_bp = Blueprint(
     "management", __name__, url_prefix=f"/api/{API_VERSION}/management"
 )

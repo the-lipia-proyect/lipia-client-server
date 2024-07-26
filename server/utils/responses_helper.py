@@ -74,6 +74,23 @@ def unauthorized(body: Dict[str, Any]) -> jsonify:
     return base_response(body, http.HTTPStatus.UNAUTHORIZED)
 
 
+def forbidden(body: Dict[str, Any]) -> jsonify:
+    """
+    Returns an unauthorized response (HTTP status code 403) with the provided body.
+
+    This function is used when a client attempts to access a resource without
+    proper authorization credentials.
+
+    Args:
+        body (Dict[str, Any]): The dictionary containing the response data.
+
+    Returns:
+        jsonify: A Flask response object with the provided body and a 401 status code.
+    """
+
+    return base_response(body, http.HTTPStatus.FORBIDDEN)
+
+
 def not_found(body: Dict[str, Any]) -> jsonify:
     """
     Returns a not found response (HTTP status code 404) with the provided body.

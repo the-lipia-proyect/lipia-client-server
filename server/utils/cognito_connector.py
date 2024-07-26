@@ -37,7 +37,7 @@ class CognitoUtils:
             response = self._cognito_client.admin_initiate_auth(
                 UserPoolId=self._pool_id,
                 ClientId=self._client_id,
-                AuthFlow="ADMIN_NO_SRP_AUTH",
+                AuthFlow="ADMIN_USER_PASSWORD_AUTH",
                 AuthParameters=auth_params,
             )
             return response["AuthenticationResult"]
@@ -70,7 +70,7 @@ class CognitoUtils:
             else:
                 raise error
 
-    def resend_confirmation_code(self, email):
+    def resend_confirmation_code(self, email: str):
         """Resends the confirmation code to the specified email address.
 
         Args:
@@ -89,8 +89,8 @@ class CognitoUtils:
 
     def verify_user(
         self,
-        email,
-        code,
+        email: str,
+        code: str,
     ):
         """Verifies the user's account using the provided confirmation code.
 
@@ -113,7 +113,7 @@ class CognitoUtils:
             print(f"Client Error: {error}")
             raise error
 
-    def refresh_token(self, refresh_token):
+    def refresh_token(self, email: str, refresh_token: str):
         """Refreshes an existing user's access token using a refresh token.
 
         Args:
@@ -133,10 +133,10 @@ class CognitoUtils:
                 AuthFlow="REFRESH_TOKEN_AUTH",
                 AuthParameters={
                     "REFRESH_TOKEN": refresh_token,
-                    "SECRET_HASH": self.get_secret_hash(""),
+                    "SECRET_HASH": self.get_secret_hash(email),
                 },
             )
-            return response
+            return response["AuthenticationResult"]
         except ClientError as error:
             raise error
 
@@ -196,15 +196,11 @@ class CognitoUtils:
         Raises:
             ClientError: If there are errors interacting with the Cognito service.
         """
-
         try:
-            change_password_request = {
-                "AccessToken": access_token,
-                "ProposedPassword": new_password,
-                "PreviousPassword": actual_password,
-            }
             response = self._cognito_client.change_password(
-                ChangePasswordRequest=change_password_request
+                AccessToken=access_token,
+                ProposedPassword=new_password,
+                PreviousPassword=actual_password,
             )
             print("Password changed successfully!")
             return response
