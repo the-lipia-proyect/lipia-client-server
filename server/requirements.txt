@@ -4,4 +4,5 @@ aws-wsgi
 elevenlabs
 python-dotenv
 boto3
-pyjwt
+pydantic==2.6.1 
+flask-cognito

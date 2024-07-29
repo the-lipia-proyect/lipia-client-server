@@ -6,11 +6,11 @@ from io import BytesIO
 from flask import Blueprint, request
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
+from flask_cognito import cognito_auth_required
 
 from utils.api_caller import api_caller
 from utils.s3_connector import S3Utils
 from utils.responses_helper import ok, bad_request, internal_server_error
-from utils.auth_helper import token_required
 
 
 bp = Blueprint("voices", __name__, url_prefix="/voices")
@@ -28,7 +28,7 @@ s3_client = S3Utils(os.getenv("S3_BUCKET_NAME", "lipia"))
 
 
 @bp.route(None, methods=[http.HTTPMethod.GET])
-@token_required
+@cognito_auth_required
 def get_voices():
     headers = {
         "Accept": "application/json",
@@ -52,7 +52,7 @@ def get_voices():
 
 
 @bp.route("/text-to-speech", methods=[http.HTTPMethod.POST])
-@token_required
+@cognito_auth_required
 def generate_audio_file():
     body = request.get_json()
     text = body.get("text")

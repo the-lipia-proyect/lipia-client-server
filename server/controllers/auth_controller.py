@@ -2,11 +2,11 @@ import http
 import os
 
 from flask import Blueprint, request
+from flask_cognito import cognito_auth_required
 
 from utils.cognito_connector import CognitoUtils
 from utils.responses_helper import ok, bad_request, internal_server_error
 from utils.auth_helper import (
-    token_required,
     get_access_token,
     get_username_from_token,
 )
@@ -122,7 +122,7 @@ def verify_email():
 
 
 @bp.route("/users/refresh-token", methods=[http.HTTPMethod.POST])
-@token_required
+@cognito_auth_required
 def refresh_token():
     body = request.get_json()
     refresh_token = body.get(
@@ -186,7 +186,7 @@ def forgot_password_confirmation():
 
 
 @bp.route("/users/change-password", methods=[http.HTTPMethod.POST])
-@token_required
+@cognito_auth_required
 def change_password():
     body = request.get_json()
     new_password = body.get(

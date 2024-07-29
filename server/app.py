@@ -1,7 +1,11 @@
+import os
+
 from flask import Flask, Blueprint
 from flask_cors import CORS
 import awsgi
 from dotenv import load_dotenv
+from flask_cognito import CognitoAuth
+
 
 from controllers import health_controller, voices_controller, auth_controller
 
@@ -10,7 +14,21 @@ load_dotenv()
 
 API_VERSION = "v1"
 app = Flask(__name__)
+app.config.update(
+    {
+        "COGNITO_REGION": os.getenv("AWS_REGION", "us-east-1"),
+        "COGNITO_USERPOOL_ID": os.getenv("AWS_COGNITO_USERS_POOL_ID"),
+        # optional
+        "COGNITO_APP_CLIENT_ID": os.getenv(
+            "AWS_COGNITO_USERS_CLIENT_ID"
+        ),  # client ID you wish to verify user is authenticated against
+        "COGNITO_CHECK_TOKEN_EXPIRATION": False,  # disable token expiration checking for testing purposes
+        "COGNITO_JWT_HEADER_NAME": "Authorization",
+        "COGNITO_JWT_HEADER_PREFIX": "Bearer",
+    }
+)
 CORS(app)
+cognito = CognitoAuth(app)
 
 management_bp = Blueprint(
     "management", __name__, url_prefix=f"/api/{API_VERSION}/management"
