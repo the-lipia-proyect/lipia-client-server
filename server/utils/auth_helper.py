@@ -1,6 +1,3 @@
-import os
-import requests
-
 from dotenv import load_dotenv
 from flask import request
 from flask_cognito import current_cognito_jwt
@@ -8,7 +5,7 @@ from flask_cognito import current_cognito_jwt
 load_dotenv()
 
 
-def get_username_from_token(token: str):
+def get_authenticated_username():
     return current_cognito_jwt.get("username")
 
 

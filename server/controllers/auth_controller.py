@@ -8,7 +8,7 @@ from utils.cognito_connector import CognitoUtils
 from utils.responses_helper import ok, bad_request, internal_server_error
 from utils.auth_helper import (
     get_access_token,
-    get_username_from_token,
+    get_authenticated_username,
 )
 
 cognito_utils = CognitoUtils(
@@ -128,8 +128,7 @@ def refresh_token():
     refresh_token = body.get(
         "refresh_token",
     )
-    access_token = get_access_token()
-    username = get_username_from_token(access_token)
+    username = get_authenticated_username()
     if not refresh_token:
         return bad_request({"message": "Invalid body: missing 'refresh_token' key"})
 
