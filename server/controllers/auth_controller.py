@@ -1,5 +1,6 @@
 import http
 import os
+import json
 
 from flask import Blueprint, request
 from flask_cognito import cognito_auth_required
@@ -72,7 +73,7 @@ def sign_up():
         user_id = cognito_utils.register_user(register_user_dto)
         return ok(SignUpResponseDto(id=user_id).model_dump())
     except ValidationError as e:
-        return bad_request({"message": e.errors()})
+        return bad_request({"message": json.loads(e.json())})
     except Exception as e:
         return internal_server_error({"message": e.__str__()})
 
