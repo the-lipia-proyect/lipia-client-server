@@ -1,4 +1,4 @@
-from flask import jsonify, Blueprint
+from flask import Blueprint
 import http
 
 from utils.responses_helper import ok

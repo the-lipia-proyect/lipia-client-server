@@ -4,5 +4,6 @@ aws-wsgi
 elevenlabs
 python-dotenv
 boto3
-pydantic==2.6.1 
+pydantic[email]==2.6.1 
 flask-cognito
+pymongo
