@@ -7,10 +7,14 @@ from flask import Blueprint, request
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from flask_cognito import cognito_auth_required
+from pydantic import ValidationError
 
 from utils.api_caller import api_caller
 from utils.s3_connector import S3Utils
 from utils.responses_helper import ok, bad_request, internal_server_error
+from dtos.get_voices_response_dto import GetVoicesResponseDto, VoiceDto
+from dtos.generate_audio_file_request_dto import GenerateAudioFileRequestDto
+from dtos.generate_audio_file_response_dto import GenerateAudioFileResponseDto
 
 
 bp = Blueprint("voices", __name__, url_prefix="/voices")
@@ -41,37 +45,31 @@ def get_voices():
         headers=headers,
     )
 
-    voices = {
-        "voices": [
-            {"voice_id": item["voice_id"], "name": item["name"]}
+    voices_response = GetVoicesResponseDto(
+        voices=[
+            VoiceDto(voice_id=item["voice_id"], name=item["name"])
             for item in response["voices"]
         ]
-    }
+    ).model_dump()
 
-    return ok(voices)
+    return ok(voices_response)
 
 
 @bp.route("/text-to-speech", methods=[http.HTTPMethod.POST])
 @cognito_auth_required
 def generate_audio_file():
-    body = request.get_json()
-    text = body.get("text")
-    voice_id = body.get("voice_id")
-    if not text:
-        return bad_request({"message": "Invalid body: missing 'text' key"})
-    if not voice_id:
-        return bad_request({"message": "Invalid body: missing 'voice_id' key"})
     try:
+        req = GenerateAudioFileRequestDto(**request.get_json())
         text_to_speech_response = eleven_labs_client.text_to_speech.convert(
-            voice_id=voice_id,
+            voice_id=req.voice_id,
             optimize_streaming_latency="3",
             output_format="mp3_22050_32",
-            text=text,
+            text=req.text,
             model_id=MODEL_ID,  # use the turbo model for low latency, for other languages use the `eleven_multilingual_v2`
             voice_settings=VoiceSettings(
-                stability=0.5,
-                similarity_boost=0.95,
-                style=0.0,
+                stability=req.voice_settings.stability,
+                similarity_boost=req.voice_settings.similarity_boost,
+                style=req.voice_settings.style,
                 use_speaker_boost=True,
             ),
         )
@@ -89,7 +87,9 @@ def generate_audio_file():
             "get_object",
             file_full_path,
         )
-        response = {"file_url": presigned_url}
+        response = GenerateAudioFileResponseDto(file_url=presigned_url).model_dump()
         return ok(response)
+    except ValidationError as e:
+        return bad_request({"message": e.errors()})
     except Exception as e:
         return internal_server_error({"message": e.__str__()})
