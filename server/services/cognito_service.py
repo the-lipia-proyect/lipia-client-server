@@ -4,10 +4,12 @@ import os
 from typing import Dict, Any
 from botocore.exceptions import ClientError
 
+from .interfaces.cognito_service import ICognitoService
+
 COGNITO_SECRET = os.getenv("AWS_COGNITO_SECRET")
 
 
-class CognitoUtils:
+class CognitoService(ICognitoService):
     def __init__(
         self,
         pool_id: str,
@@ -25,7 +27,7 @@ class CognitoUtils:
         self._pool_id = pool_id
         self._client_id = client_id
 
-    def authenticate_user(self, email, password):
+    def authenticate_user(self, email: str, password: str):
         secret_hash = self.get_secret_hash(email)
         auth_params = {
             "USERNAME": email,

@@ -1,8 +1,10 @@
 import boto3
 import os
 
+from .interfaces.s3_service import IS3Service
 
-class S3Utils:
+
+class S3Service(IS3Service):
     def __init__(
         self, bucket_name: str, region_name=os.getenv("AWS_REGION", "us-east-1")
     ):

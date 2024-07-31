@@ -1,56 +1,35 @@
 import http
-import os
 import json
 
 from flask import Blueprint, request
 from flask_cognito import cognito_auth_required
 from pydantic import ValidationError
+from flask_injector import inject
 
-from utils.cognito_connector import CognitoUtils
 from utils.responses_helper import ok, bad_request, internal_server_error
 from utils.auth_helper import get_authenticated_username, get_access_token
 from dtos.login_request_dto import LoginRequestDto
-from dtos.login_response_dto import LoginResponseDto, LoginAuthResponseDto
 from dtos.sign_up_request_dto import SignUpRequestDto
-from dtos.sign_up_response_dto import SignUpResponseDto
 from dtos.verification_code_resend_request_dto import VerificationCodeResendRequestDto
 from dtos.email_verification_request_dto import EmailVerificationRequestDto
 from dtos.refresh_token_dto import RefreshTokenRequestDto
-from dtos.refresh_token_response_dto import (
-    RefreshTokenResponseDto,
-    RefreshTokenAuthResponseDto,
-)
 from dtos.forgot_password_request_dto import ForgotPasswordRequestDto
 from dtos.forgot_password_confirmation_request_dto import (
     ForgotPasswordConfirmationRequestDto,
 )
 from dtos.change_password_request_dto import ChangePasswordRequestDto
+from services.interfaces.auth_service import IAuthService
 
-cognito_utils = CognitoUtils(
-    os.getenv("AWS_COGNITO_USERS_POOL_ID"), os.getenv("AWS_COGNITO_USERS_CLIENT_ID")
-)
 
 bp = Blueprint("auth", __name__, url_prefix="/auth")
 
 
 @bp.route("/users/login", methods=[http.HTTPMethod.POST])
-def login():
-
+@inject
+def login(auth_service: IAuthService):
     try:
         req = LoginRequestDto(**request.get_json())
-        authenticate_user_response = cognito_utils.authenticate_user(
-            req.username, req.password
-        )
-        response = LoginResponseDto(
-            auth=LoginAuthResponseDto(
-                access_token=authenticate_user_response.get("AccessToken"),
-                expiration_date=authenticate_user_response.get("ExpiresIn"),
-                id_token=authenticate_user_response.get("IdToken"),
-                refresh_token=authenticate_user_response.get("RefreshToken"),
-                token_type=authenticate_user_response.get("TokenType"),
-            )
-        ).model_dump()
-        return ok(response)
+        return auth_service.login(req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:
@@ -58,20 +37,11 @@ def login():
 
 
 @bp.route("/users/sign-up", methods=[http.HTTPMethod.POST])
-def sign_up():
-
+@inject
+def sign_up(auth_service: IAuthService):
     try:
         req = SignUpRequestDto(**request.get_json())
-        register_user_dto = {
-            "name": req.name,
-            "surname": req.surname,
-            "email": req.email,
-            "phone_number": req.phone_number,
-            "username": req.username,
-            "password": req.password,
-        }
-        user_id = cognito_utils.register_user(register_user_dto)
-        return ok(SignUpResponseDto(id=user_id).model_dump())
+        return auth_service.sign_up(req)
     except ValidationError as e:
         return bad_request({"message": json.loads(e.json())})
     except Exception as e:
@@ -81,11 +51,11 @@ def sign_up():
 @bp.route(
     "/users/email-verification/verification-code-resend", methods=[http.HTTPMethod.POST]
 )
-def resend_email_confirmation_code():
+@inject
+def resend_email_confirmation_code(auth_service: IAuthService):
     try:
         req = VerificationCodeResendRequestDto(**request.get_json())
-        cognito_utils.resend_confirmation_code(req.email)
-        return ok({})
+        return auth_service.resend_email_confirmation_code(req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:
@@ -93,11 +63,11 @@ def resend_email_confirmation_code():
 
 
 @bp.route("/users/email-verification", methods=[http.HTTPMethod.POST])
-def verify_email():
+@inject
+def verify_email(auth_service: IAuthService):
     try:
         req = EmailVerificationRequestDto(**request.get_json())
-        cognito_utils.verify_user(req.email, req.code)
-        return ok({})
+        auth_service.verify_email(req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:
@@ -106,23 +76,13 @@ def verify_email():
 
 @bp.route("/users/refresh-token", methods=[http.HTTPMethod.POST])
 @cognito_auth_required
-def refresh_token():
-    username = get_authenticated_username()
+@inject
+def refresh_token(auth_service: IAuthService):
 
     try:
         req = RefreshTokenRequestDto(**request.get_json())
-        refresh_token_response = cognito_utils.refresh_token(
-            username, req.refresh_token
-        )
-        response = RefreshTokenResponseDto(
-            auth=RefreshTokenAuthResponseDto(
-                access_token=refresh_token_response.get("AccessToken"),
-                expiration_date=refresh_token_response.get("ExpiresIn"),
-                id_token=refresh_token_response.get("IdToken"),
-                token_type=refresh_token_response.get("TokenType"),
-            )
-        ).model_dump()
-        return ok(response)
+        username = get_authenticated_username()
+        return auth_service.refresh_token(username, req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:
@@ -130,11 +90,11 @@ def refresh_token():
 
 
 @bp.route("/users/forgot-password", methods=[http.HTTPMethod.POST])
-def forgot_password():
+@inject
+def forgot_password(auth_service: IAuthService):
     try:
         req = ForgotPasswordRequestDto(**request.get_json())
-        cognito_utils.forgot_password(req.username)
-        return ok({})
+        return auth_service.forgot_password(req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:
@@ -142,11 +102,11 @@ def forgot_password():
 
 
 @bp.route("/users/forgot-password/confirmation", methods=[http.HTTPMethod.POST])
-def forgot_password_confirmation():
+@inject
+def forgot_password_confirmation(auth_service: IAuthService):
     try:
         req = ForgotPasswordConfirmationRequestDto(**request.get_json())
-        cognito_utils.confirm_forgot_password(req.username, req.password, req.code)
-        return ok({})
+        return auth_service.forgot_password_confirmation(req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:
@@ -155,17 +115,12 @@ def forgot_password_confirmation():
 
 @bp.route("/users/change-password", methods=[http.HTTPMethod.POST])
 @cognito_auth_required
-def change_password():
+@inject
+def change_password(auth_service: IAuthService):
     try:
-        req = ChangePasswordRequestDto(**request.get_json())
         access_token = get_access_token()
-        # TODO: Add auth token as the first parameter
-        cognito_utils.change_password(
-            access_token,
-            req.new_password,
-            req.actual_password,
-        )
-        return ok({})
+        req = ChangePasswordRequestDto(**request.get_json())
+        return auth_service.change_password(access_token, req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:
