@@ -8,6 +8,7 @@ from services.mongodb_service import MongoDBClient
 from flask_injector import inject
 
 from dtos.sign_up_request_dto import SignUpRequestDto
+from dtos.update_user_profile_request_dto import UpdateUserProfileRequestDto
 from utils.date_helper import get_utc_timestamp
 
 
@@ -42,5 +43,18 @@ class UserRepository:
         insert_result = self._users_collection.insert_one(new_user)
         return insert_result.inserted_id
 
-    def update(self, user_id: str, update_fields: Dict[str, Any]):
-        return
+    def update(self, user_id: str, update_user_dto: UpdateUserProfileRequestDto):
+        try:
+            update_user_fields = {
+                "name": update_user_dto.name,
+                "surname": update_user_dto.surname,
+                "updated_at": get_utc_timestamp(),
+            }
+            if update_user_dto.phone_number:
+                update_user_fields["phone_number"] = update_user_dto.phone_number
+            result = self._users_collection.update_one(
+                {"_id": user_id}, {"$set": update_user_fields}
+            )
+        except Exception as e:
+            print("ERROR", e)
+            raise e

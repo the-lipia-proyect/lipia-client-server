@@ -44,3 +44,7 @@ class ICognitoService(ABC):
     @abstractmethod
     def logout(self, access_token: str) -> None:
         pass
+
+    @abstractmethod
+    def update_user(self, username: str, update_user_dto: Dict[str, Any]):
+        pass

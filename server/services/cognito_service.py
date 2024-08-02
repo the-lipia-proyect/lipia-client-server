@@ -227,6 +227,37 @@ class CognitoService(ICognitoService):
             print(f"Error logging out: {error}")
             raise error
 
+    def update_user(self, username: str, update_user_dto: Dict[str, Any]):
+        """Updates user attributes in Cognito.
+
+        Args:
+            username (str): The username of the user.
+            user_attributes (Dict[str, str]): A dictionary of user attributes to update.
+
+        Raises:
+            ClientError: If there are errors interacting with the Cognito service.
+        """
+
+        try:
+            attributes = [
+                {"Name": "given_name", "Value": update_user_dto.get("name")},
+                {"Name": "family_name", "Value": update_user_dto.get("surname")},
+            ]
+            if update_user_dto.get("phone_number"):
+                attributes.append(
+                    {
+                        "Name": "phone_number",
+                        "Value": update_user_dto.get("phone_number"),
+                    },
+                )
+            response = self._cognito_client.admin_update_user_attributes(
+                UserPoolId=self._pool_id, Username=username, UserAttributes=attributes
+            )
+            return response
+        except ClientError as error:
+            print(f"Error updating user attributes: {error}")
+            raise error
+
     def get_secret_hash(self, email: str):
         hashed_cognito_secret = bytes(COGNITO_SECRET, "utf-8")
         message = bytes(f"{email}{self._client_id}", "utf-8")
