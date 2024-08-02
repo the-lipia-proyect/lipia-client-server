@@ -49,3 +49,7 @@ class IAuthService(ABC):
     @abstractmethod
     def change_password(self, access_token: str, req: ChangePasswordRequestDto):
         pass
+
+    @abstractmethod
+    def logout(self, access_token: str):
+        pass

@@ -40,3 +40,7 @@ class ICognitoService(ABC):
         self, access_token: str, new_password: str, actual_password: str
     ) -> None:
         pass
+
+    @abstractmethod
+    def logout(self, access_token: str) -> None:
+        pass

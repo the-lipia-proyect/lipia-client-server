@@ -211,6 +211,22 @@ class CognitoService(ICognitoService):
             print(f"Error changing password: {error}")
             raise error
 
+    def logout(self, access_token: str):
+        """Logs out the user by invalidating the access token.
+
+        Args:
+            access_token (str): The access token of the user.
+
+        Raises:
+            ClientError: If there are errors interacting with the Cognito service.
+        """
+        try:
+            self._cognito_client.global_sign_out(AccessToken=access_token)
+            print("User logged out successfully!")
+        except ClientError as error:
+            print(f"Error logging out: {error}")
+            raise error
+
     def get_secret_hash(self, email: str):
         hashed_cognito_secret = bytes(COGNITO_SECRET, "utf-8")
         message = bytes(f"{email}{self._client_id}", "utf-8")

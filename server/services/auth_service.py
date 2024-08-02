@@ -19,12 +19,16 @@ from dtos.forgot_password_confirmation_request_dto import (
 from dtos.change_password_request_dto import ChangePasswordRequestDto
 from .interfaces.cognito_service import ICognitoService
 from .interfaces.auth_service import IAuthService
+from repositories.user_repository import UserRepository
 
 
 class AuthService(IAuthService):
     @inject
-    def __init__(self, cognito_service: ICognitoService):
+    def __init__(
+        self, cognito_service: ICognitoService, user_repository: UserRepository
+    ):
         self._cognito_service = cognito_service
+        self._user_repository = user_repository
 
     def login(self, req: LoginRequestDto) -> LoginResponseDto:
         authenticate_user_response = self._cognito_service.authenticate_user(
@@ -50,8 +54,9 @@ class AuthService(IAuthService):
             "username": req.username,
             "password": req.password,
         }
-        user_id = self._cognito_service.register_user(register_user_dto)
-        return ok(SignUpResponseDto(id=user_id).model_dump())
+        cognito_user_id = self._cognito_service.register_user(register_user_dto)
+        db_user_id = self._user_repository.insert(cognito_user_id, req)
+        return ok(SignUpResponseDto(id=db_user_id).model_dump())
 
     def resend_email_confirmation_code(self, req: VerificationCodeResendRequestDto):
         self._cognito_service.resend_confirmation_code(req.email)
@@ -94,4 +99,8 @@ class AuthService(IAuthService):
             req.new_password,
             req.actual_password,
         )
+        return ok({})
+
+    def logout(self, access_token: str):
+        self._cognito_service.logout(access_token)
         return ok({})

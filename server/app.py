@@ -8,7 +8,12 @@ from flask_cognito import CognitoAuth
 from flask_injector import FlaskInjector
 
 from services.dependency_injector import configure_di
-from controllers import health_controller, voices_controller, auth_controller
+from controllers import (
+    health_controller,
+    voices_controller,
+    auth_controller,
+    user_controller,
+)
 
 
 load_dotenv()
@@ -37,6 +42,7 @@ management_bp = Blueprint(
 management_bp.register_blueprint(health_controller.bp)
 management_bp.register_blueprint(voices_controller.bp)
 management_bp.register_blueprint(auth_controller.bp)
+management_bp.register_blueprint(user_controller.bp)
 app.register_blueprint(management_bp)
 FlaskInjector(app=app, modules=[configure_di])
 

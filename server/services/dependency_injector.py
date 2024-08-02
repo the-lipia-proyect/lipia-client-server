@@ -10,10 +10,24 @@ from .interfaces.cognito_service import ICognitoService
 from .cognito_service import CognitoService
 from .interfaces.auth_service import IAuthService
 from .auth_service import AuthService
+from .mongodb_service import MongoDBClient
+from repositories.user_repository import UserRepository
+from .interfaces.user_service import IUserService
+from .user_service import UserService
 
 
 def configure_di(binder: Binder) -> Binder:
     # Bind services from different modules
+    binder.bind(
+        MongoDBClient,
+        to=MongoDBClient(
+            "lipia_database",
+            os.getenv("MONGODB_USERNAME"),
+            os.getenv("MONGODB_PASSWORD"),
+            os.getenv("MONGODB_CLUSTER"),
+        ),
+        scope=singleton,
+    )
     binder.bind(
         IS3Service, to=S3Service(os.getenv("S3_BUCKET_NAME", "lipia")), scope=singleton
     )
@@ -31,3 +45,5 @@ def configure_di(binder: Binder) -> Binder:
         scope=singleton,
     )
     binder.bind(IAuthService, to=AuthService, scope=singleton)
+    binder.bind(UserRepository, to=UserRepository, scope=singleton)
+    binder.bind(IUserService, to=UserService, scope=singleton)

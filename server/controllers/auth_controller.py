@@ -67,7 +67,7 @@ def resend_email_confirmation_code(auth_service: IAuthService):
 def verify_email(auth_service: IAuthService):
     try:
         req = EmailVerificationRequestDto(**request.get_json())
-        auth_service.verify_email(req)
+        return auth_service.verify_email(req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:
@@ -123,5 +123,18 @@ def change_password(auth_service: IAuthService):
         return auth_service.change_password(access_token, req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
+    except Exception as e:
+        return internal_server_error({"message": e.__str__()})
+
+
+@bp.route("/users/logout", methods=[http.HTTPMethod.POST])
+@cognito_auth_required
+@inject
+def logout(auth_service: IAuthService):
+    try:
+        access_token = get_access_token()
+        return auth_service.logout(
+            access_token,
+        )
     except Exception as e:
         return internal_server_error({"message": e.__str__()})
