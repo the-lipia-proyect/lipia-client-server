@@ -6,3 +6,4 @@ class GetUserProfileResponseDto(BaseModel):
     surname: str
     phone_number: str
     email: str
+    is_premium: bool = True
