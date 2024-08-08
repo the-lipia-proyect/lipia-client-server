@@ -13,6 +13,7 @@ from controllers import (
     voices_controller,
     auth_controller,
     user_controller,
+    user_configurations_controller,
 )
 
 
@@ -43,6 +44,7 @@ management_bp.register_blueprint(health_controller.bp)
 management_bp.register_blueprint(voices_controller.bp)
 management_bp.register_blueprint(auth_controller.bp)
 management_bp.register_blueprint(user_controller.bp)
+management_bp.register_blueprint(user_configurations_controller.bp)
 app.register_blueprint(management_bp)
 FlaskInjector(app=app, modules=[configure_di])
 

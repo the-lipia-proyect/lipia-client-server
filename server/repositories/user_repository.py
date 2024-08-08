@@ -1,7 +1,5 @@
 from typing import Dict, Any
 from bson import ObjectId
-import datetime
-from time import time
 
 from pymongo.collection import Collection
 from services.mongodb_service import MongoDBClient
@@ -29,7 +27,7 @@ class UserRepository:
     def get_user_by_email(self, email: str):
         return self._users_collection.find_one({"email": email})
 
-    def insert(self, user_id: str, user_dto: SignUpRequestDto):
+    def insert(self, user_id: str, user_dto: SignUpRequestDto) -> str:
         new_user = {
             "_id": user_id,
             "email": str(user_dto.email),

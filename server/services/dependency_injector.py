@@ -14,6 +14,9 @@ from .mongodb_service import MongoDBClient
 from repositories.user_repository import UserRepository
 from .interfaces.user_service import IUserService
 from .user_service import UserService
+from .interfaces.user_configurations_service import IUserConfigurationService
+from .user_configurations_service import UserConfigurationService
+from repositories.user_configurations_repository import UserConfigurationRepository
 
 
 def configure_di(binder: Binder) -> Binder:
@@ -47,3 +50,7 @@ def configure_di(binder: Binder) -> Binder:
     binder.bind(IAuthService, to=AuthService, scope=singleton)
     binder.bind(UserRepository, to=UserRepository, scope=singleton)
     binder.bind(IUserService, to=UserService, scope=singleton)
+    binder.bind(IUserConfigurationService, to=UserConfigurationService, scope=singleton)
+    binder.bind(
+        UserConfigurationRepository, to=UserConfigurationRepository, scope=singleton
+    )
