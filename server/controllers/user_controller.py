@@ -26,7 +26,7 @@ def get_user_profile(user_service: IUserService):
         return internal_server_error({"message": e.__str__()})
 
 
-@bp.route(None, methods=[http.HTTPMethod.PUT])
+@bp.route("/profile", methods=[http.HTTPMethod.PUT])
 @cognito_auth_required
 @inject
 def update_profile(user_service: IUserService):
