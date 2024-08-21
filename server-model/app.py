@@ -42,9 +42,7 @@ def predictions():
                 jsonify({"message": "Error loading the model"}),
                 500,
             )
-        loaded_data = np.array(frames).reshape(
-            (-1, 44 if with_rgb else 22, 80, 112, 3 if with_rgb else 1)
-        )
+        loaded_data = np.array(frames).reshape((-1, 44, 80, 112, 3 if with_rgb else 1))
 
         prediction = model.predict(loaded_data)
         translated_prediction = translate_prediction(prediction, label_dict)

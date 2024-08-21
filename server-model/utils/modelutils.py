@@ -9,8 +9,28 @@ LIP_HEIGHT = 80
 
 
 def get_cmodel():
-    model = tf.keras.models.load_model("./model/cmodel_01_07_2024.h5")
-    return model, {0: "boludo", 1: "chau", 2: "hola", 3: "vos", 4: "yo"}
+    model = tf.keras.models.load_model("./model/cmodel_byn_x19_x120_20_08_api.h5")
+    return model, {
+        0: "adriano",
+        1: "bueno",
+        2: "chau",
+        3: "como",
+        4: "es",
+        5: "estas",
+        6: "esto",
+        7: "ezequiel",
+        8: "gabriel",
+        9: "hola",
+        10: "matias",
+        11: "prueba",
+        12: "rodrigo",
+        13: "sil",
+        14: "sos",
+        15: "soy",
+        16: "una",
+        17: "vos",
+        18: "yo",
+    }
 
 
 def get_cmodel_rgb():
