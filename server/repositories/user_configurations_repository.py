@@ -35,6 +35,7 @@ class UserConfigurationRepository:
             "stability": user_configuration_dto.stability,
             "similarity_boost": user_configuration_dto.similarity_boost,
             "style": user_configuration_dto.style,
+            "words_timeout": user_configuration_dto.words_timeout,
             "updated_at": get_utc_timestamp(),
         }
         insert_result = self._users_configurations_collection.insert_one(
@@ -55,6 +56,7 @@ class UserConfigurationRepository:
                 "stability": update_user_configuration_dto.stability,
                 "similarity_boost": update_user_configuration_dto.similarity_boost,
                 "style": update_user_configuration_dto.style,
+                "words_timeout": update_user_configuration_dto.words_timeout,
                 "updated_at": get_utc_timestamp(),
             }
             result = self._users_configurations_collection.update_one(
