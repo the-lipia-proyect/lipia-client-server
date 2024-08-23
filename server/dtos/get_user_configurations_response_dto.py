@@ -10,3 +10,4 @@ class GetUserConfigurationsResponseDto(BaseModel):
     style: float = 0
     words_timeout: int = 5
     use_custom_voice: bool = False
+    facing_mode: str = "user"

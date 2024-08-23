@@ -39,6 +39,7 @@ class UserConfigurationService(IUserConfigurationService):
             "style": 0,
             "words_timeout": 5,
             "use_custom_voice": False,
+            "facing_mode": "user",
         }
         if user_configurations:
             user_configurations_values = {
@@ -50,6 +51,7 @@ class UserConfigurationService(IUserConfigurationService):
                 "style": user_configurations.get("style"),
                 "words_timeout": user_configurations.get("words_timeout"),
                 "use_custom_voice": user_configurations.get("use_custom_voice"),
+                "facing_mode": user_configurations.get("facing_mode"),
             }
 
         response = GetUserConfigurationsResponseDto(
@@ -61,6 +63,7 @@ class UserConfigurationService(IUserConfigurationService):
             style=user_configurations_values["style"],
             words_timeout=user_configurations_values["words_timeout"],
             use_custom_voice=user_configurations_values["use_custom_voice"],
+            facing_mode=user_configurations_values["facing_mode"],
         ).model_dump()
         return ok(response)
 

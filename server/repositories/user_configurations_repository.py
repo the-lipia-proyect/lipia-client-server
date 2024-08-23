@@ -37,6 +37,7 @@ class UserConfigurationRepository:
             "style": user_configuration_dto.style,
             "words_timeout": user_configuration_dto.words_timeout,
             "use_custom_voice": user_configuration_dto.use_custom_voice,
+            "facing_mode": user_configuration_dto.facing_mode,
             "updated_at": get_utc_timestamp(),
         }
         insert_result = self._users_configurations_collection.insert_one(
@@ -59,6 +60,7 @@ class UserConfigurationRepository:
                 "style": update_user_configuration_dto.style,
                 "words_timeout": update_user_configuration_dto.words_timeout,
                 "use_custom_voice": update_user_configuration_dto.use_custom_voice,
+                "facing_mode": update_user_configuration_dto.facing_mode,
                 "updated_at": get_utc_timestamp(),
             }
             result = self._users_configurations_collection.update_one(
