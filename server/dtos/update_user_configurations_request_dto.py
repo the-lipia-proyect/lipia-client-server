@@ -8,4 +8,5 @@ class UpdateUserConfigurationsRequestDto(BaseModel):
     stability: float = 0.5
     similarity_boost: float = 0.95
     style: float = 0
-    words_timeout: int = Field(..., ge=3, le=10)
+    words_timeout: int = (Field(..., ge=3, le=10),)
+    use_custom_voice: bool

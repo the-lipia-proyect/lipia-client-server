@@ -38,6 +38,7 @@ class UserConfigurationService(IUserConfigurationService):
             "similarity_boost": 0.95,
             "style": 0,
             "words_timeout": 5,
+            "use_custom_voice": False,
         }
         if user_configurations:
             user_configurations_values = {
@@ -48,6 +49,7 @@ class UserConfigurationService(IUserConfigurationService):
                 "similarity_boost": user_configurations.get("similarity_boost"),
                 "style": user_configurations.get("style"),
                 "words_timeout": user_configurations.get("words_timeout"),
+                "use_custom_voice": user_configurations.get("use_custom_voice"),
             }
 
         response = GetUserConfigurationsResponseDto(
@@ -58,6 +60,7 @@ class UserConfigurationService(IUserConfigurationService):
             similarity_boost=user_configurations_values["similarity_boost"],
             style=user_configurations_values["style"],
             words_timeout=user_configurations_values["words_timeout"],
+            use_custom_voice=user_configurations_values["use_custom_voice"],
         ).model_dump()
         return ok(response)
 

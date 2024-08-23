@@ -9,3 +9,4 @@ class GetUserConfigurationsResponseDto(BaseModel):
     similarity_boost: float = 0.95
     style: float = 0
     words_timeout: int = 5
+    use_custom_voice: bool = False
