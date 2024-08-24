@@ -5,6 +5,10 @@ from flask_cognito import current_cognito_jwt
 load_dotenv()
 
 
+def get_user_id():
+    return current_cognito_jwt.get("sub")
+
+
 def get_authenticated_username():
     return current_cognito_jwt.get("username")
 

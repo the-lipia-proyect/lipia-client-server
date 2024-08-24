@@ -17,6 +17,9 @@ from .user_service import UserService
 from .interfaces.user_configurations_service import IUserConfigurationService
 from .user_configurations_service import UserConfigurationService
 from repositories.user_configurations_repository import UserConfigurationRepository
+from .interfaces.shortcuts_service import IShortcutsService
+from .shortcuts_service import ShortcutsService
+from repositories.shortcuts_repository import ShortcutRepository
 
 
 def configure_di(binder: Binder) -> Binder:
@@ -54,3 +57,5 @@ def configure_di(binder: Binder) -> Binder:
     binder.bind(
         UserConfigurationRepository, to=UserConfigurationRepository, scope=singleton
     )
+    binder.bind(IShortcutsService, to=ShortcutsService, scope=singleton)
+    binder.bind(ShortcutRepository, to=ShortcutRepository, scope=singleton)
