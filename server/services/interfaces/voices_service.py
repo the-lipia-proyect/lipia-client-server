@@ -12,6 +12,6 @@ class IVoicesService(ABC):
 
     @abstractmethod
     def generate_audio_file(
-        self, req: GenerateAudioFileRequestDto
+        self, user_id: str, req: GenerateAudioFileRequestDto
     ) -> GenerateAudioFileResponseDto:
         pass

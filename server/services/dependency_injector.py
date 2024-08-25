@@ -20,6 +20,7 @@ from repositories.user_configurations_repository import UserConfigurationReposit
 from .interfaces.shortcuts_service import IShortcutsService
 from .shortcuts_service import ShortcutsService
 from repositories.shortcuts_repository import ShortcutRepository
+from elevenlabs.client import ElevenLabs
 
 
 def configure_di(binder: Binder) -> Binder:
@@ -59,3 +60,11 @@ def configure_di(binder: Binder) -> Binder:
     )
     binder.bind(IShortcutsService, to=ShortcutsService, scope=singleton)
     binder.bind(ShortcutRepository, to=ShortcutRepository, scope=singleton)
+    binder.bind(
+        ElevenLabs,
+        to=ElevenLabs(
+            base_url=os.getenv("ELEVEN_LABS_URL"),
+            api_key=os.getenv("ELEVEN_LABS_API_KEY"),
+        ),
+        scope=singleton,
+    )

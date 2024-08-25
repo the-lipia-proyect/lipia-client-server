@@ -6,6 +6,7 @@ from flask_injector import inject
 from pydantic import ValidationError
 
 from services.interfaces.voices_service import IVoicesService
+from utils.auth_helper import get_user_id
 from utils.responses_helper import bad_request, internal_server_error
 from dtos.generate_audio_file_request_dto import GenerateAudioFileRequestDto
 
@@ -29,7 +30,7 @@ def get_voices(voices_service: IVoicesService):
 def generate_audio_file(voices_service: IVoicesService):
     try:
         req = GenerateAudioFileRequestDto(**request.get_json())
-        return voices_service.generate_audio_file(req)
+        return voices_service.generate_audio_file(get_user_id(), req)
     except ValidationError as e:
         return bad_request({"message": e.errors()})
     except Exception as e:

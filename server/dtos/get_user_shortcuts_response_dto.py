@@ -2,7 +2,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 
-class Shortcut(BaseModel):
+class ShortcutDto(BaseModel):
     id: str
     text: str
     image_url: Optional[str] = None
@@ -12,4 +12,4 @@ class Shortcut(BaseModel):
 
 
 class GetUserShortcutsResponseDto(BaseModel):
-    shortcuts: list[Shortcut]
+    shortcuts: list[ShortcutDto]
