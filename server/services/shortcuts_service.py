@@ -45,6 +45,8 @@ class ShortcutsService(IShortcutsService):
                 order=data.get("order"),
                 audio_file_url=data.get("audio_file_url"),
                 voice_description=data.get("voice_description"),
+                created_at=data.get("created_at"),
+                updated_at=data.get("updated_at"),
             )
             for data in shortcuts_list
         ]

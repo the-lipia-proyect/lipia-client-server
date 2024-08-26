@@ -38,6 +38,7 @@ class UserConfigurationRepository:
             "words_timeout": user_configuration_dto.words_timeout,
             "use_custom_voice": user_configuration_dto.use_custom_voice,
             "facing_mode": user_configuration_dto.facing_mode,
+            "created_at": get_utc_timestamp(),
             "updated_at": get_utc_timestamp(),
         }
         insert_result = self._users_configurations_collection.insert_one(

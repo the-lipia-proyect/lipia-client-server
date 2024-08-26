@@ -37,6 +37,7 @@ class ShortcutRepository:
             "order": shortcut.order,
             "audio_file_url": shortcut.audio_file_url,
             "voice_description": shortcut.voice_description,
+            "created_at": get_utc_timestamp(),
             "updated_at": get_utc_timestamp(),
         }
         insert_result = self._shortcuts_collection.insert_one(new_shortcut)

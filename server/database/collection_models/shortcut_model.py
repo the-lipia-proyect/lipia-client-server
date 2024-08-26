@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class Shortcut(BaseModel):
     image: Optional[str] = None
     text: str
-    order: int
+    order: Optional[int] = None
     audio_file_url: Optional[str] = None
     voice_description: Optional[str] = None
     user_id: str

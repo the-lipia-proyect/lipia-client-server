@@ -24,7 +24,6 @@ def get_user_shortcurts(shortcuts_service: IShortcutsService):
         descending_order = (
             request.args.get("descending_order", default="false").lower() == "true"
         )
-        print("ORDERBY", order_by, descending_order)
         return shortcuts_service.get_user_shortcuts(
             get_user_id(), order_by, descending_order
         )

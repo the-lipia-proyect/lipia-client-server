@@ -6,9 +6,11 @@ class ShortcutDto(BaseModel):
     id: str
     text: str
     image_url: Optional[str] = None
-    order: int
+    order: Optional[int] = None
     audio_file_url: Optional[str] = None
     voice_description: Optional[str] = None
+    created_at: float
+    updated_at: float
 
 
 class GetUserShortcutsResponseDto(BaseModel):
