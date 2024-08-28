@@ -1,6 +1,7 @@
 # import base64
 # import os
-# import json
+import json
+import gzip
 from flask import Flask, request, jsonify, Blueprint
 import numpy as np
 
@@ -24,7 +25,12 @@ def health():
 @models_bp.route("/predictions", methods=["POST"])
 def predictions():
     try:
-        payload = request.get_json()
+        compressed_data = request.data
+        decompressed_data = gzip.decompress(compressed_data)
+
+        # Parse the JSON from the decompressed data
+        payload = json.loads(decompressed_data)
+        # payload = request.get_json()
         model_to_execute = payload.get("model", "CMODEL_RGB")
         encoded_frames = payload.get("frames", None)
         with_rgb = payload.get("with_rgb", False)
@@ -33,9 +39,7 @@ def predictions():
                 jsonify({"message": "Invalid Body: the key body.frames is missing"}),
                 400,
             )
-        # frames = base64.b64decode(encoded_frames).decode("utf-8")
         frames = encoded_frames
-        # print("FRAMEs", frames)
         model, label_dict = load_model(model_to_execute)
         if model == None:
             return (
