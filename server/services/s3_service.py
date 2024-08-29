@@ -34,7 +34,7 @@ class S3Service(IS3Service):
 
         try:
             s3_response = self.s3_client.upload_fileobj(
-                payload, self.bucket_name, file_name
+                payload, self.bucket_name, file_name, ExtraArgs={"ACL": "public-read"}
             )
             return s3_response
         except Exception as e:

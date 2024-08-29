@@ -67,9 +67,9 @@ class VoicesService(IVoicesService):
         s3_file_name = f"{uuid.uuid4()}.mp3"
         file_full_path = f"{AUDIO_FILES_PATH}/USER_ID={user_id}/YEAR={year}/MONTH={month}/DAY={day}/{s3_file_name}"
         self._s3_service.upload_file(file_full_path, audio_stream)
-        presigned_url = self._s3_service.generate_presigned_url(
-            "get_object",
-            file_full_path,
+        file_url = (
+            f"https://{self._s3_service.bucket_name}.s3.amazonaws.com/{file_full_path}"
         )
-        response = GenerateAudioFileResponseDto(file_url=presigned_url).model_dump()
+
+        response = GenerateAudioFileResponseDto(file_url=file_url).model_dump()
         return ok(response)
