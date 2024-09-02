@@ -28,8 +28,19 @@ def get_interpretations_user_history(interpretation_service: IInterpretationServ
         descending_order = (
             request.args.get("descending_order", default="false").lower() == "true"
         )
+        page = request.args.get("page", default="1")
+        page_size = request.args.get("page_size", default=None)
+        try:
+            page = int(page)
+        except ValueError:
+            page = 1
+
+        try:
+            page_size = int(page_size) if page_size is not None else None
+        except ValueError:
+            page_size = None
         return interpretation_service.get_user_history(
-            get_user_id(), order_by, descending_order
+            get_user_id(), order_by, descending_order, page, page_size
         )
     except ValidationError as e:
         return bad_request({"message": e.errors()})

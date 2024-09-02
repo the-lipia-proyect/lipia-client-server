@@ -1,3 +1,5 @@
+from typing import Optional
+
 from flask_injector import inject
 
 from utils.responses_helper import ok, not_found
@@ -31,11 +33,16 @@ class InterpretationService(IInterpretationService):
         self._interpretation_repository = interpretation_repository
 
     def get_user_history(
-        self, user_id: str, order_by: str, descending_order: str
+        self,
+        user_id: str,
+        order_by: str,
+        descending_order: str,
+        page: int,
+        page_size: Optional[int] = None,
     ) -> GetInterpretationsUserHistoryResponseDto:
         get_interpreatations_response_list = (
             self._interpretation_repository.get_by_user_id(
-                user_id, order_by, descending_order
+                user_id, order_by, descending_order, page, page_size
             )
         )
         user_interpretations = [

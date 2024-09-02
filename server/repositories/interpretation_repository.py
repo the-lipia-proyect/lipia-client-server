@@ -1,4 +1,4 @@
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 from bson import ObjectId
 
 from pymongo.collection import Collection
@@ -20,12 +20,20 @@ class InterpretationRepository:
         return self._interpretations_collection.find_one({"_id": ObjectId(id)})
 
     def get_by_user_id(
-        self, user_id: str, order_by: str, descending_order: str
+        self,
+        user_id: str,
+        order_by: str,
+        descending_order: str,
+        page: Optional[int] = 1,
+        page_size: Optional[int] = None,
     ) -> list[Dict[str, Any]] | None:
         sort_order = -1 if descending_order else 1
         cursor = self._interpretations_collection.find({"user_id": user_id}).sort(
             order_by, sort_order
         )
+        if page_size is not None:
+            skip_count = (page - 1) * page_size
+            cursor = cursor.skip(skip_count).limit(page_size)
         return list(cursor)
 
     def insert(self, interpretation: Interpretation) -> str:

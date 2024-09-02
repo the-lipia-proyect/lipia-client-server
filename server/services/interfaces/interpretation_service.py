@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional
 
 from dtos.get_interpretations_user_history_response_dto import (
     GetInterpretationsUserHistoryResponseDto,
@@ -17,7 +18,12 @@ from dtos.update_interpretation_note_request_dto import (
 class IInterpretationService(ABC):
     @abstractmethod
     def get_user_history(
-        self, user_id: str, order_by: str, descending_order: str
+        self,
+        user_id: str,
+        order_by: str,
+        descending_order: str,
+        page: int,
+        page_size: Optional[int] = None,
     ) -> GetInterpretationsUserHistoryResponseDto:
         pass
 
