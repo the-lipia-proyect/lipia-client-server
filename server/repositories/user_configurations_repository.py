@@ -38,6 +38,7 @@ class UserConfigurationRepository:
             "words_timeout": user_configuration_dto.words_timeout,
             "use_custom_voice": user_configuration_dto.use_custom_voice,
             "facing_mode": user_configuration_dto.facing_mode,
+            "playback_rate": user_configuration_dto.playback_rate,
             "created_at": get_utc_timestamp(),
             "updated_at": get_utc_timestamp(),
         }
@@ -62,6 +63,7 @@ class UserConfigurationRepository:
                 "words_timeout": update_user_configuration_dto.words_timeout,
                 "use_custom_voice": update_user_configuration_dto.use_custom_voice,
                 "facing_mode": update_user_configuration_dto.facing_mode,
+                "playback_rate": update_user_configuration_dto.playback_rate,
                 "updated_at": get_utc_timestamp(),
             }
             result = self._users_configurations_collection.update_one(

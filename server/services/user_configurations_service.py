@@ -40,6 +40,7 @@ class UserConfigurationService(IUserConfigurationService):
             "words_timeout": 5,
             "use_custom_voice": False,
             "facing_mode": "user",
+            "playback_rate": 0.5,
         }
         if user_configurations:
             user_configurations_values = {
@@ -52,6 +53,7 @@ class UserConfigurationService(IUserConfigurationService):
                 "words_timeout": user_configurations.get("words_timeout"),
                 "use_custom_voice": user_configurations.get("use_custom_voice"),
                 "facing_mode": user_configurations.get("facing_mode"),
+                "playback_rate": user_configurations.get("playback_rate", 0.5),
             }
 
         response = GetUserConfigurationsResponseDto(
@@ -64,6 +66,7 @@ class UserConfigurationService(IUserConfigurationService):
             words_timeout=user_configurations_values["words_timeout"],
             use_custom_voice=user_configurations_values["use_custom_voice"],
             facing_mode=user_configurations_values["facing_mode"],
+            playback_rate=user_configurations_values["playback_rate"],
         ).model_dump()
         return ok(response)
 
