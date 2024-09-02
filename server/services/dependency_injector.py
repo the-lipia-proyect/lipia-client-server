@@ -20,6 +20,9 @@ from repositories.user_configurations_repository import UserConfigurationReposit
 from .interfaces.shortcuts_service import IShortcutsService
 from .shortcuts_service import ShortcutsService
 from repositories.shortcuts_repository import ShortcutRepository
+from .interfaces.interpretation_service import IInterpretationService
+from .interpretation_service import InterpretationService
+from repositories.interpretation_repository import InterpretationRepository
 from elevenlabs.client import ElevenLabs
 
 
@@ -60,6 +63,8 @@ def configure_di(binder: Binder) -> Binder:
     )
     binder.bind(IShortcutsService, to=ShortcutsService, scope=singleton)
     binder.bind(ShortcutRepository, to=ShortcutRepository, scope=singleton)
+    binder.bind(IInterpretationService, to=InterpretationService, scope=singleton)
+    binder.bind(InterpretationRepository, to=InterpretationRepository, scope=singleton)
     binder.bind(
         ElevenLabs,
         to=ElevenLabs(
