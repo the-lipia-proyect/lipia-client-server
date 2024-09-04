@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from base_response_dto import BaseResponseDto
 
 
-class SignUpResponseDto(BaseModel):
-    id: str
+class SignUpResponseDto(BaseResponseDto):
+    pass

@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from base_response_dto import BaseResponseDto
 
 
-class GenerateUserInterpretationResponseDto(BaseModel):
-    id: str
+class GenerateUserInterpretationResponseDto(BaseResponseDto):
+    pass
