@@ -108,6 +108,23 @@ def not_found(body: Dict[str, Any]) -> jsonify:
     return base_response(body, http.HTTPStatus.NOT_FOUND)
 
 
+def unprocessable_entity(body: Dict[str, Any]) -> jsonify:
+    """
+    Returns a not found response (HTTP status code 422) with the provided body.
+
+    This function is used when a client requests is not a possible flow
+    on the server.
+
+    Args:
+        body (Dict[str, Any]): The dictionary containing the response data.
+
+    Returns:
+        jsonify: A Flask response object with the provided body and a 404 status code.
+    """
+
+    return base_response(body, http.HTTPStatus.UNPROCESSABLE_ENTITY)
+
+
 def internal_server_error(body: Dict[str, Any]) -> jsonify:
     """
     Returns an internal server error response (HTTP status code 500) with the provided body.

@@ -11,9 +11,12 @@ from dtos.generate_audio_file_response_dto import GenerateAudioFileResponseDto
 from dtos.get_voices_response_dto import GetVoicesResponseDto, VoiceDto
 from dtos.generate_audio_file_request_dto import GenerateAudioFileRequestDto
 from dtos.generate_audio_file_response_dto import GenerateAudioFileResponseDto
-from utils.responses_helper import ok
+from dtos.generate_voice_request_dto import GenerateVoiceRequestDto
+from dtos.generate_voice_response_dto import GenerateVoiceResponseDto
+from utils.responses_helper import ok, not_found
 from .interfaces.voices_service import IVoicesService
 from .interfaces.s3_service import IS3Service
+from repositories.user_voices_repository import UserVoiceRepository
 
 # ENGLISH VERSION
 # MODEL_ID = "eleven_turbo_v2"
@@ -23,9 +26,15 @@ AUDIO_FILES_PATH = "prediction_audios"
 
 class VoicesService(IVoicesService):
     @inject
-    def __init__(self, s3_service: IS3Service, eleven_labs_service: ElevenLabs) -> None:
+    def __init__(
+        self,
+        s3_service: IS3Service,
+        eleven_labs_service: ElevenLabs,
+        user_voices_repository: UserVoiceRepository,
+    ) -> None:
         self._s3_service = s3_service
         self._eleven_labs_service = eleven_labs_service
+        self._user_voices_repository = user_voices_repository
 
     def get_voices(self) -> GetVoicesResponseDto:
         response = self._eleven_labs_service.voices.get_all()
@@ -73,3 +82,22 @@ class VoicesService(IVoicesService):
 
         response = GenerateAudioFileResponseDto(file_url=file_url).model_dump()
         return ok(response)
+
+    def create_voice(self, user_id: str, req: GenerateVoiceRequestDto):
+        add_voice_response = self._eleven_labs_service.voices.add(
+            name=req.name, files=[]
+        )
+        self._user_voices_repository.insert(user_id, add_voice_response.voice_id)
+        response = GenerateVoiceResponseDto(id=add_voice_response.voice_id).model_dump()
+        return ok(response)
+
+    def delete_voice(self, user_id: str, id: str):
+        existing_user_voice = (
+            self._user_voices_repository.get_user_voice_by_user_id_and_id(user_id, id)
+        )
+
+        if not existing_user_voice:
+            return not_found({"message": "The voice does not exist"})
+        delete_voice_response = self._eleven_labs_service.voices.delete(voice_id=id)
+        self._user_voices_repository.delete(id)
+        return ok({})
