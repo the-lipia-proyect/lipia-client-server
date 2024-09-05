@@ -1,4 +1,4 @@
-from base_response_dto import BaseResponseDto
+from .base_response_dto import BaseResponseDto
 
 
 class GenerateUserInterpretationResponseDto(BaseResponseDto):
