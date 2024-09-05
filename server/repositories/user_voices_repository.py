@@ -19,6 +19,10 @@ class UserVoiceRepository:
     ) -> Optional[Dict[str, Any]]:
         return self._users_voices_collection.find_one({"user_id": user_id, "_id": id})
 
+    def get_by_user_id(self, user_id: str) -> list[Dict[str, Any]] | None:
+        cursor = self._users_voices_collection.find({"user_id": user_id})
+        return list(cursor)
+
     def insert(self, user_id: str, voice_id: str) -> str:
         new_user_voice = {
             "_id": voice_id,

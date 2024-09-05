@@ -20,7 +20,9 @@ bp = Blueprint("voices", __name__, url_prefix="/voices")
 @inject
 def get_voices(voices_service: IVoicesService):
     try:
-        return voices_service.get_voices()
+        return voices_service.get_voices(
+            get_user_id(),
+        )
     except Exception as e:
         print("Error:", e)
         return internal_server_error(str(e))

@@ -36,13 +36,29 @@ class VoicesService(IVoicesService):
         self._eleven_labs_service = eleven_labs_service
         self._user_voices_repository = user_voices_repository
 
-    def get_voices(self) -> GetVoicesResponseDto:
+    def get_voices(self, user_id: str) -> GetVoicesResponseDto:
         response = self._eleven_labs_service.voices.get_all()
-
+        user_voices = self._user_voices_repository.get_by_user_id(user_id)
+        user_voice_ids = {voice.get("_id") for voice in user_voices}
+        eleven_labs_voices = response.voices
+        # This array contains eleven labs premade or professional predefined voices
+        premade_or_professional_voices = [
+            voice
+            for voice in eleven_labs_voices
+            if voice.category in ["premade", "professional"]
+        ]
+        # This array contains voices generated with out user
+        cloned_voices = [
+            voice for voice in eleven_labs_voices if voice.category == "cloned"
+        ]
+        user_cloned_voices = [
+            voice for voice in cloned_voices if voice.voice_id in user_voice_ids
+        ]
+        user_visible_voices = premade_or_professional_voices + user_cloned_voices
         voices_response = GetVoicesResponseDto(
             voices=[
                 VoiceDto(voice_id=item.voice_id, name=item.name)
-                for item in response.voices
+                for item in user_visible_voices
             ]
         ).model_dump()
 

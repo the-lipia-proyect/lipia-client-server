@@ -8,7 +8,7 @@ from dtos.generate_voice_request_dto import GenerateVoiceRequestDto
 
 class IVoicesService(ABC):
     @abstractmethod
-    def get_voices(self) -> GetVoicesResponseDto:
+    def get_voices(self, user_id: str) -> GetVoicesResponseDto:
         pass
 
     @abstractmethod
