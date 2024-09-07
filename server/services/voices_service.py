@@ -1,6 +1,7 @@
 from io import BytesIO
 import uuid
 import time
+from urllib.parse import urlparse
 
 from elevenlabs.client import ElevenLabs
 from elevenlabs import VoiceSettings
@@ -16,12 +17,14 @@ from dtos.generate_voice_response_dto import GenerateVoiceResponseDto
 from utils.responses_helper import ok, not_found
 from .interfaces.voices_service import IVoicesService
 from .interfaces.s3_service import IS3Service
+from utils.api_caller import api_caller
 from repositories.user_voices_repository import UserVoiceRepository
 
 # ENGLISH VERSION
 # MODEL_ID = "eleven_turbo_v2"
 MODEL_ID = "eleven_multilingual_v2"
 AUDIO_FILES_PATH = "prediction_audios"
+CLONED_VOICES_AUDIOS_PATH = "cloned_voices_audios"
 
 
 class VoicesService(IVoicesService):
@@ -100,10 +103,28 @@ class VoicesService(IVoicesService):
         return ok(response)
 
     def create_voice(self, user_id: str, req: GenerateVoiceRequestDto):
+        final_files = []
+
+        for audio_url in req.audios:
+            parsed_url = urlparse(audio_url)
+            source_key = parsed_url.path.lstrip("/")
+
+            destination_key = f"{CLONED_VOICES_AUDIOS_PATH}/{source_key.split('/')[-1]}"
+
+            self._s3_service.move_file(source_key, destination_key)
+
+            final_url = f"https://{self._s3_service.bucket_name}.s3.amazonaws.com/{destination_key}"
+
+            response = api_caller("GET", headers={}, url=final_url)
+
+            file_content = BytesIO(response.content)
+            final_files.append(file_content)
         add_voice_response = self._eleven_labs_service.voices.add(
-            name=req.name, files=[]
+            name=req.name, files=final_files
         )
+
         self._user_voices_repository.insert(user_id, add_voice_response.voice_id)
+
         response = GenerateVoiceResponseDto(id=add_voice_response.voice_id)
         return ok(response)
 

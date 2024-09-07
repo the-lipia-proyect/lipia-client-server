@@ -58,3 +58,28 @@ class S3Service(IS3Service):
             ExpiresIn=expires_in,
         )
         return signed_url
+
+    def move_file(self, source_key: str, destination_key: str) -> None:
+        """
+        Moves a file from source_key to destination_key within the same bucket.
+
+        Args:
+            source_key (str): The key of the source file.
+            destination_key (str): The key of the destination file.
+
+        Raises:
+            Exception: If an error occurs during the move operation.
+        """
+        try:
+            # Copy the file to the new location
+            self.s3_client.copy_object(
+                Bucket=self.bucket_name,
+                CopySource={"Bucket": self.bucket_name, "Key": source_key},
+                Key=destination_key,
+                ACL="public-read",  # Optional: Set ACL if needed
+            )
+            # Delete the file from the source location
+            self.s3_client.delete_object(Bucket=self.bucket_name, Key=source_key)
+        except Exception as e:
+            print("Error in s3_service.move_file:", e)
+            raise

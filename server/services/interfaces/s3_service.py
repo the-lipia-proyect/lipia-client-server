@@ -12,3 +12,11 @@ class IS3Service(ABC):
         self, client_method: str, file_name: str, expires_in: int, params: Optional[Any]
     ) -> str:
         pass
+
+    @abstractmethod
+    def move_file(
+        self,
+        source_key: str,
+        destination_key: str,
+    ) -> str:
+        pass

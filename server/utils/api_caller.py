@@ -24,4 +24,4 @@ def api_caller(
     logger.info(f"Calling api to:{url}, with headers : {headers} and payload: {body}")
     response = requests.request(method=method, url=url, headers=headers, data=body)
     response.raise_for_status()
-    return response.json()
+    return response

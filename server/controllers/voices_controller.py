@@ -1,4 +1,5 @@
 import http
+import json
 
 from flask import Blueprint, request
 from flask_cognito import cognito_auth_required
@@ -35,10 +36,10 @@ def generate_voice(voices_service: IVoicesService):
         req = GenerateVoiceRequestDto(**request.get_json())
         return voices_service.create_voice(get_user_id(), req)
     except ValidationError as e:
-        return bad_request({"message": e.errors()})
+        return bad_request({"message": json.loads(e.json())})
     except Exception as e:
         print("Error:", e)
-        return internal_server_error(str(e))
+        return internal_server_error({"message": str(e)})
 
 
 @bp.route("<string:id>", methods=[http.HTTPMethod.DELETE])
