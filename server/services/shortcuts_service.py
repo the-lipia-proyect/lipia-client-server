@@ -81,7 +81,7 @@ class ShortcutsService(IShortcutsService):
 
             generate_audio_json_result = generate_audio_result[0].get_json()
             shortcut.audio_file_url = generate_audio_json_result.get("file_url")
-            get_voices_response = self._voices_service.get_voices()
+            get_voices_response = self._voices_service.get_voices(user_id)
             voices_data = get_voices_response[0].get_json()
             matching_voice = next(
                 (
@@ -133,7 +133,7 @@ class ShortcutsService(IShortcutsService):
             )
             generate_audio_json_result = generate_audio_result[0].get_json()
             shortcut.audio_file_url = generate_audio_json_result.get("file_url")
-            get_voices_response = self._voices_service.get_voices()
+            get_voices_response = self._voices_service.get_voices(user_id)
             voices_data = get_voices_response[0].get_json()
             matching_voice = next(
                 (
