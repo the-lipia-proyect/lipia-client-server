@@ -60,7 +60,7 @@ class VoicesService(IVoicesService):
                 VoiceDto(voice_id=item.voice_id, name=item.name)
                 for item in user_visible_voices
             ]
-        ).model_dump()
+        )
 
         return ok(voices_response)
 
