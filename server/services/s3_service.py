@@ -83,3 +83,22 @@ class S3Service(IS3Service):
         except Exception as e:
             print("Error in s3_service.move_file:", e)
             raise
+
+    def delete_file(self, file_name: str) -> None:
+        """
+        Deletes a file from the specified S3 bucket.
+
+        Args:
+            file_name (str): The key (name) of the file to delete.
+
+        Raises:
+            Exception: If an error occurs during the delete operation.
+        """
+        try:
+            self.s3_client.delete_object(Bucket=self.bucket_name, Key=file_name)
+            print(
+                f"File {file_name} successfully deleted from bucket {self.bucket_name}."
+            )
+        except Exception as e:
+            print(f"Error in s3_service.delete_file: {e}")
+            raise

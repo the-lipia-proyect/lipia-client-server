@@ -16,6 +16,7 @@ from repositories.shortcuts_repository import ShortcutRepository
 from repositories.user_configurations_repository import UserConfigurationRepository
 from .interfaces.shortcuts_service import IShortcutsService
 from .interfaces.voices_service import IVoicesService
+from .interfaces.s3_service import IS3Service
 from database.collection_models.shortcut_model import Shortcut
 
 
@@ -26,10 +27,12 @@ class ShortcutsService(IShortcutsService):
         shortcuts_repository: ShortcutRepository,
         user_configuration_repositroy: UserConfigurationRepository,
         voices_service: IVoicesService,
+        s3_service: IS3Service,
     ):
         self._shortcuts_repository = shortcuts_repository
         self._user_configuration_repository = user_configuration_repositroy
         self._voices_service = voices_service
+        self._s3_service = s3_service
 
     def get_user_shortcuts(
         self, user_id: str, order_by: str, descending_order: bool
@@ -153,5 +156,11 @@ class ShortcutsService(IShortcutsService):
         shortcut = self._shortcuts_repository.get_by_id(id)
         if not shortcut:
             return not_found({"message": "The shortcut does not exist"})
+        if shortcut.get("audio_file_url"):
+            file_key = shortcut.get("audio_file_url").split(
+                f"https://{self._s3_service.bucket_name}.s3.amazonaws.com/"
+            )[-1]
+
+            self._s3_service.delete_file(file_key)
         self._shortcuts_repository.delete(id)
         return ok({})

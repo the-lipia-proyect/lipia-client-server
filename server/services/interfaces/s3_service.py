@@ -20,3 +20,7 @@ class IS3Service(ABC):
         destination_key: str,
     ) -> str:
         pass
+
+    @abstractmethod
+    def delete_file(self, file_name: str) -> str:
+        pass
