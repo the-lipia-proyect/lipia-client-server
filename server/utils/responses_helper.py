@@ -4,7 +4,7 @@ from typing import Dict, Any
 from flask import jsonify
 
 
-def base_response(body: Dict[str, Any], status_code: http.HTTPStatus) -> jsonify:
+def base_response(body: Any, status_code: http.HTTPStatus) -> jsonify:
     """
     Creates a standardized response for Flask applications.
 
@@ -19,7 +19,8 @@ def base_response(body: Dict[str, Any], status_code: http.HTTPStatus) -> jsonify
     Returns:
         jsonify: A Flask response object with the specified body and status code.
     """
-
+    if hasattr(body, "model_dump"):
+        body = body.model_dump()
     return jsonify(body), status_code
 
 
@@ -40,7 +41,7 @@ def ok(body: Dict[str, Any]) -> jsonify:
     return base_response(body, http.HTTPStatus.OK)
 
 
-def bad_request(body: Dict[str, Any]) -> jsonify:
+def bad_request(body: Any) -> jsonify:
     """
     Returns a bad request response (HTTP status code 400) with the provided body.
 
@@ -57,7 +58,7 @@ def bad_request(body: Dict[str, Any]) -> jsonify:
     return base_response(body, http.HTTPStatus.BAD_REQUEST)
 
 
-def unauthorized(body: Dict[str, Any]) -> jsonify:
+def unauthorized(body: Any) -> jsonify:
     """
     Returns an unauthorized response (HTTP status code 401) with the provided body.
 
@@ -74,7 +75,7 @@ def unauthorized(body: Dict[str, Any]) -> jsonify:
     return base_response(body, http.HTTPStatus.UNAUTHORIZED)
 
 
-def forbidden(body: Dict[str, Any]) -> jsonify:
+def forbidden(body: Any) -> jsonify:
     """
     Returns an unauthorized response (HTTP status code 403) with the provided body.
 
@@ -91,7 +92,7 @@ def forbidden(body: Dict[str, Any]) -> jsonify:
     return base_response(body, http.HTTPStatus.FORBIDDEN)
 
 
-def not_found(body: Dict[str, Any]) -> jsonify:
+def not_found(body: Any) -> jsonify:
     """
     Returns a not found response (HTTP status code 404) with the provided body.
 
@@ -108,7 +109,7 @@ def not_found(body: Dict[str, Any]) -> jsonify:
     return base_response(body, http.HTTPStatus.NOT_FOUND)
 
 
-def unprocessable_entity(body: Dict[str, Any]) -> jsonify:
+def unprocessable_entity(body: Any) -> jsonify:
     """
     Returns a not found response (HTTP status code 422) with the provided body.
 
@@ -125,7 +126,7 @@ def unprocessable_entity(body: Dict[str, Any]) -> jsonify:
     return base_response(body, http.HTTPStatus.UNPROCESSABLE_ENTITY)
 
 
-def internal_server_error(body: Dict[str, Any]) -> jsonify:
+def internal_server_error(body: Any) -> jsonify:
     """
     Returns an internal server error response (HTTP status code 500) with the provided body.
 

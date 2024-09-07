@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Optional, Any
 
 
 class IS3Service(ABC):
@@ -8,6 +9,6 @@ class IS3Service(ABC):
 
     @abstractmethod
     def generate_presigned_url(
-        self, client_method: str, file_name: str, expires_in: int
+        self, client_method: str, file_name: str, expires_in: int, params: Optional[Any]
     ) -> str:
         pass

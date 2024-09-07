@@ -24,6 +24,8 @@ from .interfaces.interpretation_service import IInterpretationService
 from .interpretation_service import InterpretationService
 from repositories.interpretation_repository import InterpretationRepository
 from repositories.user_voices_repository import UserVoiceRepository
+from .interfaces.files_service import IFilesService
+from .files_service import FilesService
 from elevenlabs.client import ElevenLabs
 
 
@@ -67,6 +69,7 @@ def configure_di(binder: Binder) -> Binder:
     binder.bind(IInterpretationService, to=InterpretationService, scope=singleton)
     binder.bind(InterpretationRepository, to=InterpretationRepository, scope=singleton)
     binder.bind(UserVoiceRepository, to=UserVoiceRepository, scope=singleton)
+    binder.bind(IFilesService, to=FilesService, scope=singleton)
     binder.bind(
         ElevenLabs,
         to=ElevenLabs(

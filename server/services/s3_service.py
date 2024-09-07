@@ -1,5 +1,6 @@
 import boto3
 import os
+from typing import Optional, Any
 
 from .interfaces.s3_service import IS3Service
 
@@ -42,11 +43,18 @@ class S3Service(IS3Service):
             raise
 
     def generate_presigned_url(
-        self, client_method: str, file_name: str, expires_in: int = 3600
+        self,
+        client_method: str,
+        file_name: str,
+        expires_in: int = 3600,
+        params: Optional[Any] = None,
     ) -> str:
+        final_params = {"Bucket": self.bucket_name, "Key": file_name}
+        if params:
+            final_params = {**final_params, **params}
         signed_url = self.s3_client.generate_presigned_url(
             client_method,
-            Params={"Bucket": self.bucket_name, "Key": file_name},
+            Params=final_params,
             ExpiresIn=expires_in,
         )
         return signed_url
