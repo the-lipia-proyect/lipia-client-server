@@ -96,7 +96,7 @@ class VoicesService(IVoicesService):
             f"https://{self._s3_service.bucket_name}.s3.amazonaws.com/{file_full_path}"
         )
 
-        response = GenerateAudioFileResponseDto(file_url=file_url).model_dump()
+        response = GenerateAudioFileResponseDto(file_url=file_url)
         return ok(response)
 
     def create_voice(self, user_id: str, req: GenerateVoiceRequestDto):
@@ -104,7 +104,7 @@ class VoicesService(IVoicesService):
             name=req.name, files=[]
         )
         self._user_voices_repository.insert(user_id, add_voice_response.voice_id)
-        response = GenerateVoiceResponseDto(id=add_voice_response.voice_id).model_dump()
+        response = GenerateVoiceResponseDto(id=add_voice_response.voice_id)
         return ok(response)
 
     def delete_voice(self, user_id: str, id: str):

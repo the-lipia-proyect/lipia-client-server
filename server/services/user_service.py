@@ -26,7 +26,7 @@ class UserService(IUserService):
             surname=user["surname"],
             phone_number=user["phone_number"],
             email=user["email"],
-        ).model_dump()
+        )
         return ok(response)
 
     def update_profile(self, username: str, req: UpdateUserProfileRequestDto):

@@ -67,7 +67,7 @@ class UserConfigurationService(IUserConfigurationService):
             use_custom_voice=user_configurations_values["use_custom_voice"],
             facing_mode=user_configurations_values["facing_mode"],
             playback_rate=user_configurations_values["playback_rate"],
-        ).model_dump()
+        )
         return ok(response)
 
     def update_user_configuration(

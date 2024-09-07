@@ -42,7 +42,7 @@ class AuthService(IAuthService):
                 refresh_token=authenticate_user_response.get("RefreshToken"),
                 token_type=authenticate_user_response.get("TokenType"),
             )
-        ).model_dump()
+        )
         return ok(response)
 
     def sign_up(self, req: SignUpRequestDto) -> SignUpResponseDto:
@@ -56,7 +56,7 @@ class AuthService(IAuthService):
         }
         cognito_user_id = self._cognito_service.register_user(register_user_dto)
         db_user_id = self._user_repository.insert(cognito_user_id, req)
-        return ok(SignUpResponseDto(id=db_user_id).model_dump())
+        return ok(SignUpResponseDto(id=db_user_id))
 
     def resend_email_confirmation_code(self, req: VerificationCodeResendRequestDto):
         self._cognito_service.resend_confirmation_code(req.email)
@@ -79,7 +79,7 @@ class AuthService(IAuthService):
                 id_token=refresh_token_response.get("IdToken"),
                 token_type=refresh_token_response.get("TokenType"),
             )
-        ).model_dump()
+        )
         return ok(response)
 
     def forgot_password(self, req: ForgotPasswordRequestDto):

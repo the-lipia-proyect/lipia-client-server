@@ -50,7 +50,7 @@ class ShortcutsService(IShortcutsService):
             )
             for data in shortcuts_list
         ]
-        response = GetUserShortcutsResponseDto(shortcuts=shortcuts).model_dump()
+        response = GetUserShortcutsResponseDto(shortcuts=shortcuts)
         return ok(response)
 
     def insert_user_shortcut(self, user_id: str, req: GenerateShortcutRequestDto):
@@ -95,7 +95,7 @@ class ShortcutsService(IShortcutsService):
                 shortcut.voice_description = matching_voice.get("name")
 
         db_user_id = self._shortcuts_repository.insert(shortcut)
-        response = GenerateShortcutResponseDto(id=db_user_id).model_dump()
+        response = GenerateShortcutResponseDto(id=db_user_id)
         return ok(response)
 
     def update_user_shortcut(

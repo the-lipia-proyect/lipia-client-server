@@ -62,7 +62,7 @@ class InterpretationService(IInterpretationService):
         ]
         response = GetInterpretationsUserHistoryResponseDto(
             interpretations=user_interpretations
-        ).model_dump()
+        )
         return ok(response)
 
     def insert_user_interpretation(
@@ -73,7 +73,7 @@ class InterpretationService(IInterpretationService):
         ]
         interpretation = Interpretation(words=words_list, user_id=user_id)
         db_id_result = self._interpretation_repository.insert(interpretation)
-        response = GenerateUserInterpretationResponseDto(id=db_id_result).model_dump()
+        response = GenerateUserInterpretationResponseDto(id=db_id_result)
         return ok(response)
 
     def update_interpretation_note(
