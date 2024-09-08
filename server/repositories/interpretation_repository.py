@@ -26,22 +26,31 @@ class InterpretationRepository:
         descending_order: str,
         page: Optional[int] = 1,
         page_size: Optional[int] = None,
+        from_date: Optional[int] = None,
     ) -> list[Dict[str, Any]] | None:
         sort_order = -1 if descending_order else 1
-        cursor = self._interpretations_collection.find({"user_id": user_id}).sort(
+        query_filter = {"user_id": user_id}
+
+        if from_date is not None:
+            query_filter["created_at"] = {"$gt": from_date}
+
+        cursor = self._interpretations_collection.find(query_filter).sort(
             order_by, sort_order
         )
+
         if page_size is not None:
             skip_count = (page - 1) * page_size
             cursor = cursor.skip(skip_count).limit(page_size)
+
         return list(cursor)
 
     def insert(self, interpretation: Interpretation) -> str:
         interpretation = {
-            "words": [
-                {"prediction": word.prediction, "data": word.data}
-                for word in interpretation.words
-            ],
+            "word": {
+                "prediction": interpretation.word.prediction,
+                "order": interpretation.word.order,
+            },
+            "phrase_group": interpretation.phrase_group,
             "user_id": interpretation.user_id,
             "created_at": get_utc_timestamp(),
             "updated_at": get_utc_timestamp(),
@@ -57,10 +66,11 @@ class InterpretationRepository:
     ):
         try:
             update_interpretation_fields = {
-                "words": [
-                    {"prediction": word.prediction, "data": word.data}
-                    for word in interpretation.words
-                ],
+                "word": {
+                    "prediction": interpretation.word.prediction,
+                    "order": interpretation.word.order,
+                },
+                "phrase_group": interpretation.phrase_group,
                 "user_id": interpretation.user_id,
                 "note": interpretation.note,
                 "updated_at": get_utc_timestamp(),

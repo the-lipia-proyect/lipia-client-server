@@ -4,11 +4,12 @@ from pydantic import BaseModel
 
 class WordDto(BaseModel):
     prediction: str
-    data: str
+    order: int
 
 
 class Interpretation(BaseModel):
-    words: list[WordDto]
+    word: WordDto
+    phrase_group: str
     user_id: str
     updated_at: Optional[str] = None
     note: Optional[str] = None

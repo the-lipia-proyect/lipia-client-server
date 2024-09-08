@@ -1,15 +1,15 @@
 from pydantic import BaseModel
-from typing import Optional, Any
+from typing import Optional
 
 
 class WordDto(BaseModel):
     prediction: str
-    data: Any
+    order: int
 
 
 class InterpretationDto(BaseModel):
     id: str
-    words: list[WordDto]
+    word: WordDto
     note: Optional[str]
     created_at: float
     updated_at: float

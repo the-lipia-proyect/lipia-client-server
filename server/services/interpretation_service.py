@@ -39,21 +39,17 @@ class InterpretationService(IInterpretationService):
         descending_order: str,
         page: int,
         page_size: Optional[int] = None,
+        from_date: Optional[int] = None,
     ) -> GetInterpretationsUserHistoryResponseDto:
         get_interpreatations_response_list = (
             self._interpretation_repository.get_by_user_id(
-                user_id, order_by, descending_order, page, page_size
+                user_id, order_by, descending_order, page, page_size, from_date
             )
         )
         user_interpretations = [
             InterpretationDto(
                 id=str(data.get("_id")),
-                # this line is temporary because word.data size is so bigger
-                # words=data.get("words"),
-                words=[
-                    {"prediction": word.get("prediction"), "data": ""}
-                    for word in data.get("words", [])
-                ],
+                word=data.get("word"),
                 note=data.get("note"),
                 created_at=data.get("created_at"),
                 updated_at=data.get("updated_at"),
@@ -68,10 +64,12 @@ class InterpretationService(IInterpretationService):
     def insert_user_interpretation(
         self, user_id: str, req: GenerateUserInterpretationRequestDto
     ) -> GenerateUserInterpretationResponseDto:
-        words_list = [
-            WordDto(prediction=word.prediction, data=word.data) for word in req.words
-        ]
-        interpretation = Interpretation(words=words_list, user_id=user_id)
+        word_dict = (
+            req.word.model_dump() if hasattr(req.word, "model_dump") else req.word
+        )
+        interpretation = Interpretation(
+            word=word_dict, user_id=user_id, phrase_group=req.phrase_group
+        )
         db_id_result = self._interpretation_repository.insert(interpretation)
         response = GenerateUserInterpretationResponseDto(id=db_id_result)
         return ok(response)
@@ -82,14 +80,12 @@ class InterpretationService(IInterpretationService):
         existing_interpretation = self._interpretation_repository.get_by_id(id)
         if not existing_interpretation:
             return not_found({"message": "The shortcut does not exist"})
-        words_list = [
-            WordDto(prediction=word.get("prediction"), data=word.get("data"))
-            for word in existing_interpretation.get("words")
-        ]
+        word = existing_interpretation.get("word")
         updated_interpretation = Interpretation(
-            words=words_list,
+            word=word,
             user_id=existing_interpretation.get("user_id"),
             note=req.note,
+            phrase_group=existing_interpretation.get("phrase_group"),
         )
         self._interpretation_repository.update(id, updated_interpretation)
         return ok({})

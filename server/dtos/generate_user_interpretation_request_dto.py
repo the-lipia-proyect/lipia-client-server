@@ -4,8 +4,9 @@ from typing import Any
 
 class WordDto(BaseModel):
     prediction: str
-    data: str
+    order: int
 
 
 class GenerateUserInterpretationRequestDto(BaseModel):
-    words: list[WordDto]
+    word: WordDto
+    phrase_group: str

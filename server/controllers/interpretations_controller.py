@@ -30,6 +30,7 @@ def get_interpretations_user_history(interpretation_service: IInterpretationServ
         )
         page = request.args.get("page", default="1")
         page_size = request.args.get("page_size", default=None)
+        from_date = request.args.get("from_date", default=None)
         try:
             page = int(page)
         except ValueError:
@@ -39,8 +40,14 @@ def get_interpretations_user_history(interpretation_service: IInterpretationServ
             page_size = int(page_size) if page_size is not None else None
         except ValueError:
             page_size = None
+
+        try:
+            from_date = int(from_date) if from_date is not None else None
+        except ValueError:
+            from_date = None
+
         return interpretation_service.get_user_history(
-            get_user_id(), order_by, descending_order, page, page_size
+            get_user_id(), order_by, descending_order, page, page_size, from_date
         )
     except ValidationError as e:
         return bad_request({"message": e.errors()})

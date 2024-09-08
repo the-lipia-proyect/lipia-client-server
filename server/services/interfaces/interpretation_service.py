@@ -24,6 +24,7 @@ class IInterpretationService(ABC):
         descending_order: str,
         page: int,
         page_size: Optional[int] = None,
+        from_date: Optional[int] = None,
     ) -> GetInterpretationsUserHistoryResponseDto:
         pass
 
