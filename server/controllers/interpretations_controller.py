@@ -68,6 +68,18 @@ def post_create_interpretation(interpretation_service: IInterpretationService):
         return internal_server_error({"message": e.__str__()})
 
 
+@bp.route("<string:id>", methods=[http.HTTPMethod.GET])
+@cognito_auth_required
+@inject
+def get_interpretation_by_id(id: str, interpretation_service: IInterpretationService):
+    try:
+        return interpretation_service.get_interpretation_by_id(id)
+    except ValidationError as e:
+        return bad_request({"message": e.errors()})
+    except Exception as e:
+        return internal_server_error({"message": e.__str__()})
+
+
 @bp.route("<string:id>/notes", methods=[http.HTTPMethod.PUT])
 @cognito_auth_required
 @inject

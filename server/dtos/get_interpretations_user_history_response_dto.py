@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from typing import Optional
 
 
 class WordDto(BaseModel):
@@ -10,9 +9,9 @@ class WordDto(BaseModel):
 class InterpretationDto(BaseModel):
     id: str
     word: WordDto
-    note: Optional[str]
     created_at: float
     updated_at: float
+    phrase_group: str
 
 
 class GetInterpretationsUserHistoryResponseDto(BaseModel):

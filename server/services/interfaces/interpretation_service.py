@@ -13,6 +13,7 @@ from dtos.generate_user_interpretation_response_dto import (
 from dtos.update_interpretation_note_request_dto import (
     UpdateInterpretationNoteRequestDto,
 )
+from dtos.get_interpretation_by_id_response import GetInterpretationByIdResponseDto
 
 
 class IInterpretationService(ABC):
@@ -38,4 +39,8 @@ class IInterpretationService(ABC):
     def update_interpretation_note(
         self, id: str, req: UpdateInterpretationNoteRequestDto
     ) -> None:
+        pass
+
+    @abstractmethod
+    def get_interpretation_by_id(self, id: str) -> GetInterpretationByIdResponseDto:
         pass

@@ -19,6 +19,7 @@ from dtos.get_interpretations_user_history_response_dto import (
 from dtos.update_interpretation_note_request_dto import (
     UpdateInterpretationNoteRequestDto,
 )
+from dtos.get_interpretation_by_id_response import GetInterpretationByIdResponseDto
 from database.collection_models.interpretation_model import Interpretation, WordDto
 
 
@@ -50,9 +51,9 @@ class InterpretationService(IInterpretationService):
             InterpretationDto(
                 id=str(data.get("_id")),
                 word=data.get("word"),
-                note=data.get("note"),
                 created_at=data.get("created_at"),
                 updated_at=data.get("updated_at"),
+                phrase_group=data.get("phrase_group"),
             )
             for data in get_interpreatations_response_list
         ]
@@ -79,7 +80,7 @@ class InterpretationService(IInterpretationService):
     ) -> None:
         existing_interpretation = self._interpretation_repository.get_by_id(id)
         if not existing_interpretation:
-            return not_found({"message": "The shortcut does not exist"})
+            return not_found({"message": "The interpretation does not exist"})
         word = existing_interpretation.get("word")
         updated_interpretation = Interpretation(
             word=word,
@@ -89,3 +90,15 @@ class InterpretationService(IInterpretationService):
         )
         self._interpretation_repository.update(id, updated_interpretation)
         return ok({})
+
+    def get_interpretation_by_id(self, id: str) -> GetInterpretationByIdResponseDto:
+        existing_interpretation = self._interpretation_repository.get_by_id(id)
+        if not existing_interpretation:
+            return not_found({"message": "The shortcut does not exist"})
+        response = GetInterpretationByIdResponseDto(
+            id=str(existing_interpretation.get("_id")),
+            created_at=existing_interpretation.get("created_at"),
+            updated_at=existing_interpretation.get("updated_at"),
+            note=existing_interpretation.get("note"),
+        )
+        return ok(response)
