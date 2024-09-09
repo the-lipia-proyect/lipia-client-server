@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import List
 
 from dtos.generate_audio_file_request_dto import GenerateAudioFileRequestDto
 from dtos.generate_audio_file_response_dto import GenerateAudioFileResponseDto
@@ -8,7 +9,9 @@ from dtos.generate_voice_request_dto import GenerateVoiceRequestDto
 
 class IVoicesService(ABC):
     @abstractmethod
-    def get_voices(self, user_id: str) -> GetVoicesResponseDto:
+    def get_voices(
+        self, user_id: str, voice_categories: List[str] = None
+    ) -> GetVoicesResponseDto:
         pass
 
     @abstractmethod

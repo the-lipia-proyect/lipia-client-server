@@ -2,6 +2,7 @@ from io import BytesIO
 import uuid
 import time
 from urllib.parse import urlparse
+from typing import List
 
 from elevenlabs.client import ElevenLabs
 from elevenlabs import VoiceSettings
@@ -39,7 +40,9 @@ class VoicesService(IVoicesService):
         self._eleven_labs_service = eleven_labs_service
         self._user_voices_repository = user_voices_repository
 
-    def get_voices(self, user_id: str) -> GetVoicesResponseDto:
+    def get_voices(
+        self, user_id: str, voice_categories: List[str] = []
+    ) -> GetVoicesResponseDto:
         response = self._eleven_labs_service.voices.get_all()
         user_voices = self._user_voices_repository.get_by_user_id(user_id)
         user_voice_ids = {voice.get("_id") for voice in user_voices}
@@ -50,7 +53,7 @@ class VoicesService(IVoicesService):
             for voice in eleven_labs_voices
             if voice.category in ["premade", "professional"]
         ]
-        # This array contains voices generated with out user
+        # This array contains voices generated with our user
         cloned_voices = [
             voice for voice in eleven_labs_voices if voice.category == "cloned"
         ]
@@ -58,9 +61,16 @@ class VoicesService(IVoicesService):
             voice for voice in cloned_voices if voice.voice_id in user_voice_ids
         ]
         user_visible_voices = premade_or_professional_voices + user_cloned_voices
+
+        if voice_categories:
+            user_visible_voices = [
+                voice
+                for voice in user_visible_voices
+                if voice.category in voice_categories
+            ]
         voices_response = GetVoicesResponseDto(
             voices=[
-                VoiceDto(voice_id=item.voice_id, name=item.name)
+                VoiceDto(voice_id=item.voice_id, name=item.name, category=item.category)
                 for item in user_visible_voices
             ]
         )

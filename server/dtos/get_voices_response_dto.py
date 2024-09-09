@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class VoiceDto(BaseModel):
     voice_id: str
     name: str
+    category: str
 
 
 class GetVoicesResponseDto(BaseModel):
