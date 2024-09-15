@@ -99,6 +99,6 @@ class InterpretationService(IInterpretationService):
             id=str(existing_interpretation.get("_id")),
             created_at=existing_interpretation.get("created_at"),
             updated_at=existing_interpretation.get("updated_at"),
-            note=existing_interpretation.get("note"),
+            note=existing_interpretation.get("note") or "",
         )
         return ok(response)
