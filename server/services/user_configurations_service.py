@@ -41,6 +41,7 @@ class UserConfigurationService(IUserConfigurationService):
             "use_custom_voice": False,
             "facing_mode": "user",
             "playback_rate": 0.5,
+            "enable_emergency_phones": False,
         }
         if user_configurations:
             user_configurations_values = {
@@ -54,6 +55,9 @@ class UserConfigurationService(IUserConfigurationService):
                 "use_custom_voice": user_configurations.get("use_custom_voice"),
                 "facing_mode": user_configurations.get("facing_mode"),
                 "playback_rate": user_configurations.get("playback_rate", 0.5),
+                "enable_emergency_phones": user_configurations.get(
+                    "enable_emergency_phones", False
+                ),
             }
 
         response = GetUserConfigurationsResponseDto(
@@ -67,6 +71,9 @@ class UserConfigurationService(IUserConfigurationService):
             use_custom_voice=user_configurations_values["use_custom_voice"],
             facing_mode=user_configurations_values["facing_mode"],
             playback_rate=user_configurations_values["playback_rate"],
+            enable_emergency_phones=user_configurations_values[
+                "enable_emergency_phones"
+            ],
         )
         return ok(response)
 

@@ -12,3 +12,4 @@ class GetUserConfigurationsResponseDto(BaseModel):
     words_timeout: int = 5
     use_custom_voice: bool = False
     facing_mode: str = "user"
+    enable_emergency_phones: bool = False

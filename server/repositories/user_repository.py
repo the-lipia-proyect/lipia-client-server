@@ -47,6 +47,10 @@ class UserRepository:
                 "name": update_user_dto.name,
                 "surname": update_user_dto.surname,
                 "updated_at": get_utc_timestamp(),
+                "phone_number_emergency": update_user_dto.phone_number_emergency,
+                "phone_number_doctor": update_user_dto.phone_number_doctor,
+                "phone_number_doctor_emergency": update_user_dto.phone_number_doctor_emergency,
+                "blood_type": update_user_dto.blood_type,
             }
             if update_user_dto.phone_number:
                 update_user_fields["phone_number"] = update_user_dto.phone_number

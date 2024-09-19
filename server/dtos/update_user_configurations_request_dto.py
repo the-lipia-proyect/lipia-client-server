@@ -12,3 +12,4 @@ class UpdateUserConfigurationsRequestDto(BaseModel):
     words_timeout: int = (Field(..., ge=3, le=10),)
     use_custom_voice: bool
     facing_mode: str = "user"
+    enable_emergency_phones: bool = False

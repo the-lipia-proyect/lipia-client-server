@@ -7,3 +7,7 @@ class GetUserProfileResponseDto(BaseModel):
     phone_number: str
     email: str
     is_premium: bool = True
+    blood_type: str = ""
+    phone_number_emergency: str = ""
+    phone_number_doctor: str = ""
+    phone_number_doctor_emergency: str = ""

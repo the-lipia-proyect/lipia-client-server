@@ -26,6 +26,10 @@ class UserService(IUserService):
             surname=user["surname"],
             phone_number=user["phone_number"],
             email=user["email"],
+            phone_number_doctor=user.get("phone_number_doctor", ""),
+            phone_number_doctor_emergency=user.get("phone_number_doctor_emergency", ""),
+            phone_number_emergency=user.get("phone_number_emergency", ""),
+            blood_type=user.get("blood_type", ""),
         )
         return ok(response)
 

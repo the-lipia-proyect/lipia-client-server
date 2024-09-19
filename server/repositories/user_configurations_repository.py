@@ -39,6 +39,7 @@ class UserConfigurationRepository:
             "use_custom_voice": user_configuration_dto.use_custom_voice,
             "facing_mode": user_configuration_dto.facing_mode,
             "playback_rate": user_configuration_dto.playback_rate,
+            "enable_emergency_phones": user_configuration_dto.enable_emergency_phones,
             "created_at": get_utc_timestamp(),
             "updated_at": get_utc_timestamp(),
         }
@@ -64,6 +65,7 @@ class UserConfigurationRepository:
                 "use_custom_voice": update_user_configuration_dto.use_custom_voice,
                 "facing_mode": update_user_configuration_dto.facing_mode,
                 "playback_rate": update_user_configuration_dto.playback_rate,
+                "enable_emergency_phones": update_user_configuration_dto.enable_emergency_phones,
                 "updated_at": get_utc_timestamp(),
             }
             result = self._users_configurations_collection.update_one(
