@@ -58,9 +58,38 @@ def get_cmodel_rgb():
     }
 
 
-MODELS = {"CMODEL": get_cmodel(), "CMODEL_RGB": get_cmodel_rgb()}
+def get_cmodel_2509():
+    model = tf.keras.models.load_model("./model/cmodel_x19_full_2509_2035.h5")
+    return model, {
+        0: "adriano",
+        1: "bueno",
+        2: "chau",
+        3: "como",
+        4: "es",
+        5: "estas",
+        6: "esto",
+        7: "ezequiel",
+        8: "gabriel",
+        9: "hola",
+        10: "matias",
+        11: "prueba",
+        12: "rodrigo",
+        13: "sil",
+        14: "sos",
+        15: "soy",
+        16: "una",
+        17: "vos",
+        18: "yo",
+    }
 
-VALID_MODELS = ["CMODEL", "CMODEL_RGB"]
+
+MODELS = {
+    "CMODEL": get_cmodel(),
+    "CMODEL_RGB": get_cmodel_rgb(),
+    "CMODEL_2509": get_cmodel_2509(),
+}
+
+VALID_MODELS = ["CMODEL", "CMODEL_RGB", "CMODEL_2509"]
 
 
 def load_model(model: str = "CMODEL_RGB"):
