@@ -74,7 +74,7 @@ def post_predictions_compressed():
         return internal_server_error({"message": str(e)})
 
 @bp.route("/compressed/opencv", methods=[http.HTTPMethod.POST])
-def post_predictions_compressed():
+def post_predictions_compressed_opencv():
     try:
         # Decode the Base64 encoded data
         encoded_data = request.json.get("data", None)
