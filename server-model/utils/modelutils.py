@@ -1,6 +1,6 @@
 import os
 from typing import Dict, Any
-
+import cv2
 import tensorflow as tf
 import numpy as np
 
@@ -115,3 +115,33 @@ def translate_prediction(prediction, label_dict: Dict[str, Any]):
             maxProb = prob
             maxLabel = label
     return {"label": maxLabel, "probability": str(maxProb)}
+
+
+def preprocess_frame(lip_frame):
+    # Verificar si la imagen es RGB (3 canales) y convertirla a escala de grises
+    if len(lip_frame.shape) == 3 and lip_frame.shape[-1] == 3:  # Imagen RGB
+        lip_frame = cv2.cvtColor(lip_frame, cv2.COLOR_BGR2GRAY)
+
+    # Redimensionar la imagen a las dimensiones requeridas
+    lip_frame = cv2.resize(lip_frame, (LIP_WIDTH, LIP_HEIGHT))
+
+    # Asegurarse de que la imagen es del tipo uint8 para aplicar CLAHE
+    if lip_frame.dtype != np.uint8:
+        lip_frame = lip_frame.astype(np.uint8)
+
+    # Aplicar CLAHE para mejorar el contraste
+    clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(3, 3))
+    lip_frame_eq = clahe.apply(lip_frame)
+
+    # Aplicar GaussianBlur y filtros adicionales
+    lip_frame_eq = cv2.GaussianBlur(lip_frame_eq, (7, 7), 0)
+    lip_frame_eq = cv2.bilateralFilter(lip_frame_eq, 5, 75, 75)
+
+    # Aplicar un filtro de agudizado (sharpening)
+    kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
+    lip_frame_eq = cv2.filter2D(lip_frame_eq, -1, kernel)
+
+    # Aplicar un desenfoque Gaussiano al final
+    lip_frame_eq = cv2.GaussianBlur(lip_frame_eq, (5, 5), 0)
+
+    return lip_frame_eq
