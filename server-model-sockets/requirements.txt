@@ -1,0 +1,7 @@
+flask
+tensorflow-cpu
+numpy
+flask_cors
+aws-wsgi
+flask-socketio==5.3.5
+eventlet
