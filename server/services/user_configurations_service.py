@@ -31,13 +31,13 @@ class UserConfigurationService(IUserConfigurationService):
         )
         # default values
         user_configurations_values = {
-            "frame_delay": 50,
+            "frame_delay": 10,
             "selected_camera": "",
             "selected_voice": "",
             "stability": 0.5,
             "similarity_boost": 0.95,
             "style": 0,
-            "words_timeout": 5,
+            "words_timeout": 3,
             "use_custom_voice": False,
             "facing_mode": "user",
             "playback_rate": 0.5,

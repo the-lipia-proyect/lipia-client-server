@@ -9,7 +9,7 @@ class GetUserConfigurationsResponseDto(BaseModel):
     similarity_boost: float = 0.95
     playback_rate: float = 0.5
     style: float = 0
-    words_timeout: int = 5
+    words_timeout: int = 3
     use_custom_voice: bool = False
     facing_mode: str = "user"
     enable_emergency_phones: bool = False
