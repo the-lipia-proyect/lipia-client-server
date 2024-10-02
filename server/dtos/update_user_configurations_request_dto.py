@@ -9,7 +9,7 @@ class UpdateUserConfigurationsRequestDto(BaseModel):
     similarity_boost: float = 0.95
     playback_rate: float = Field(0.5, ge=0, le=1)
     style: float = 0
-    words_timeout: int = (Field(..., ge=3, le=10),)
+    words_timeout: int = Field(..., ge=0, le=10)
     use_custom_voice: bool
     facing_mode: str = "user"
     enable_emergency_phones: bool = False
