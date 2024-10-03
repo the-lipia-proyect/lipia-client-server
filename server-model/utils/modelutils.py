@@ -100,21 +100,43 @@ def load_model(model: str = "CMODEL_RGB"):
         return MODELS[model]
 
 
+# def translate_prediction(prediction, label_dict: Dict[str, Any]):
+#     prob_per_class = []
+
+#     maxLabel = ""
+#     maxProb = 0.0
+
+#     for i in range(len(prediction[0])):
+#         prob_per_class.append((prediction[0][i], label_dict[i]))
+#     sorted_probs = sorted(prob_per_class, key=lambda x: x[0], reverse=True)
+#     for prob, label in sorted_probs:
+#         print(f"{label}: {prob:.3f}")
+#         if prob > maxProb:
+#             maxProb = prob
+#             maxLabel = label
+#     return {"label": maxLabel, "probability": str(maxProb)}
+
+
 def translate_prediction(prediction, label_dict: Dict[str, Any]):
-    prob_per_class = []
+    # Convert prediction to a NumPy array for efficient processing
+    probs = np.array(prediction[0])
 
-    maxLabel = ""
-    maxProb = 0.0
+    # Get the indices of the sorted probabilities in descending order
+    sorted_indices = np.argsort(-probs)  # Negative for descending order
 
-    for i in range(len(prediction[0])):
-        prob_per_class.append((prediction[0][i], label_dict[i]))
-    sorted_probs = sorted(prob_per_class, key=lambda x: x[0], reverse=True)
-    for prob, label in sorted_probs:
+    # Get the top probabilities and their corresponding labels
+    sorted_probs = probs[sorted_indices]
+    sorted_labels = [label_dict[i] for i in sorted_indices]
+
+    # Print probabilities
+    for prob, label in zip(sorted_probs, sorted_labels):
         print(f"{label}: {prob:.3f}")
-        if prob > maxProb:
-            maxProb = prob
-            maxLabel = label
-    return {"label": maxLabel, "probability": str(maxProb)}
+
+    # Get the maximum probability and corresponding label
+    max_index = np.argmax(sorted_probs)
+    max_prob = sorted_probs[max_index]
+    max_label = sorted_labels[max_index]
+    return {"label": max_label, "probability": str(max_prob)}
 
 
 def preprocess_frame(lip_frame):
