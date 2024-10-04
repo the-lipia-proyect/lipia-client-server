@@ -3,4 +3,8 @@ tensorflow-cpu
 numpy
 flask_cors
 aws-wsgi
+pydantic[email]==2.6.1
 opencv-python-headless
+flask-cognito
+flask-injector
+python-dotenv
