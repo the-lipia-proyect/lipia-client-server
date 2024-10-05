@@ -10,6 +10,7 @@ from services.interfaces.predictions_service import IPredictionsService
 from utils.responses_helper import ok, bad_request, internal_server_error
 from dtos.get_prediction_request_dto import GetPredictionRequestDto
 from dtos.get_prediction_compressed_request_dto import GetPredictionCompressedRequestDto
+from dtos.get_lipnet_prediction_request_dto import GetLipnetPredictionRequestDto
 
 bp = Blueprint("predictions", __name__, url_prefix="/predictions")
 
@@ -63,6 +64,20 @@ def post_predictions_compressed_opencv(predictions_service: IPredictionsService)
     try:
         req = GetPredictionCompressedRequestDto(**request.get_json())
         return predictions_service.predict_compressed_opencv(req)
+    except ValidationError as e:
+        return bad_request({"message": json.loads(e.json())})
+    except Exception as e:
+        print("Error:", e)
+        return internal_server_error({"message": str(e)})
+
+
+@bp.route("/lipnet", methods=[http.HTTPMethod.POST])
+@cognito_auth_required
+@inject
+def post_predictions_lipnet(predictions_service: IPredictionsService):
+    try:
+        req = GetLipnetPredictionRequestDto(**request.get_json())
+        return predictions_service.predict_lipnet(req)
     except ValidationError as e:
         return bad_request({"message": json.loads(e.json())})
     except Exception as e:

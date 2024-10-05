@@ -1,11 +1,34 @@
 import os
 from typing import Dict, Any
+
 import cv2
 import tensorflow as tf
 import numpy as np
+from keras.models import Sequential
+from keras.layers import (
+    Conv3D,
+    LSTM,
+    Dense,
+    Dropout,
+    Bidirectional,
+    MaxPool3D,
+    Activation,
+    Flatten,
+    TimeDistributed,
+    Input,
+)
 
 LIP_WIDTH = 112
 LIP_HEIGHT = 80
+TOTAL_FRAMES = 44
+
+VOCAB = [x for x in "abdefgijklmnoprstuchy "]  # FONEMAS
+CHANNELS = 1
+CHAR_TO_NUM = tf.keras.layers.StringLookup(vocabulary=VOCAB, oov_token="")
+NUM_TO_CHAR = tf.keras.layers.StringLookup(
+    vocabulary=CHAR_TO_NUM.get_vocabulary(), oov_token="", invert=True
+)
+VOCABULARY_SIZE = CHAR_TO_NUM.vocabulary_size()
 
 
 def get_cmodel():
@@ -81,6 +104,41 @@ def get_cmodel_2509():
         17: "vos",
         18: "yo",
     }
+
+
+def get_lipnet_model():
+    model = Sequential()
+    model.add(Input(shape=(44, LIP_HEIGHT, LIP_WIDTH, CHANNELS)))
+    model.add(Conv3D(128, 3, padding="same"))
+    model.add(Activation("relu"))
+    model.add(MaxPool3D((1, 2, 2)))
+
+    model.add(Conv3D(256, 3, padding="same"))
+    model.add(Activation("relu"))
+    model.add(MaxPool3D((1, 2, 2)))
+
+    model.add(Conv3D(75, 3, padding="same"))
+    model.add(Activation("relu"))
+    model.add(MaxPool3D((1, 2, 2)))
+    model.add(TimeDistributed(Flatten()))
+
+    model.add(
+        Bidirectional(
+            LSTM(128, return_sequences=True, recurrent_initializer="glorot_uniform")
+        )
+    )
+    model.add(Dropout(0.5))
+
+    model.add(
+        Bidirectional(
+            LSTM(128, return_sequences=True, recurrent_initializer="glorot_uniform")
+        )
+    )
+    model.add(Dropout(0.5))
+
+    model.add(Dense(VOCABULARY_SIZE + 1, activation="softmax"))
+    model.load_weights(os.path.join("model", "chkpoint_lipnet_2-10-2024-23-00.keras"))
+    return model
 
 
 MODELS = {
@@ -167,3 +225,70 @@ def preprocess_frame(lip_frame):
     lip_frame_eq = cv2.GaussianBlur(lip_frame_eq, (5, 5), 0)
 
     return lip_frame_eq
+
+
+def lipnet_preprocess_frame(lip_frame):
+
+    return lip_frame
+
+
+def process_frames(lip_frames):
+    processed_frames = []
+    for lip_frame in lip_frames:
+        lip_frame = np.array(lip_frame)
+        # TODO: Analyze if this blockcode is necessary
+        # lip_frame = cv2.resize(lip_frame, (LIP_WIDTH, LIP_HEIGHT))
+        # print("EXECUTING cv2.cvtColor")
+        # lip_frame_lab = cv2.cvtColor(lip_frame, cv2.COLOR_BGR2LAB)
+        # print("EXECUTING cv2.createCLAHE")
+        # # Apply contrast stretching to the L channel of the LAB image
+        # l_channel, a_channel, b_channel = cv2.split(lip_frame_lab)
+        # clahe = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(3, 3))
+        # l_channel_eq = clahe.apply(l_channel)
+
+        # # Merge the equalized L channel with the original A and B channels
+        # lip_frame_eq = cv2.merge((l_channel_eq, a_channel, b_channel))
+        # lip_frame_eq = cv2.cvtColor(lip_frame_eq, cv2.COLOR_LAB2BGR)
+        image_8bit = (lip_frame * 255).astype("uint8")
+        lip_frame_eq = cv2.GaussianBlur(image_8bit, (7, 7), 0)
+        lip_frame_eq = cv2.bilateralFilter(lip_frame_eq, 5, 75, 75)
+        kernel = np.array([[-1, -1, -1], [-1, 9, -1], [-1, -1, -1]])
+        # Apply the kernel to the input image
+        lip_frame_eq = cv2.filter2D(lip_frame_eq, -1, kernel)
+        image_8bit = (lip_frame_eq * 255).astype("uint8")
+        lip_frame_eq = cv2.GaussianBlur(image_8bit, (5, 5), 0)
+        # print("Executing cv2.cvtColor")
+        # lip_frame_eq = cv2.cvtColor(lip_frame_eq, cv2.COLOR_BGR2GRAY)
+        lip_frame_eq = np.expand_dims(lip_frame_eq, axis=-1)
+        lip_frame = lip_frame_eq
+        processed_frames.append(lip_frame_eq)
+    frames_array = np.array(processed_frames, dtype=np.float32)
+
+    # Padding or truncating frames to match TOTAL_FRAMES
+    num_frames = frames_array.shape[0]
+    if num_frames < TOTAL_FRAMES:
+        padding = np.zeros(
+            (TOTAL_FRAMES - num_frames, LIP_HEIGHT, LIP_WIDTH, CHANNELS),
+            dtype=np.float32,
+        )
+        frames_array = np.concatenate([frames_array, padding], axis=0)
+    elif num_frames > TOTAL_FRAMES:
+        frames_array = frames_array[:TOTAL_FRAMES]
+
+    mean = np.mean(frames_array)
+    std = np.std(frames_array)
+    normalized_frames = (frames_array - mean) / std
+
+    return normalized_frames
+
+
+def CTCLoss(y_true, y_pred):
+    batch_len = tf.cast(tf.shape(y_true)[0], dtype="int64")
+    input_length = tf.cast(tf.shape(y_pred)[1], dtype="int64")
+    label_length = tf.cast(tf.shape(y_true)[1], dtype="int64")
+
+    input_length = input_length * tf.ones(shape=(batch_len, 1), dtype="int64")
+    label_length = label_length * tf.ones(shape=(batch_len, 1), dtype="int64")
+
+    loss = tf.keras.backend.ctc_batch_cost(y_true, y_pred, input_length, label_length)
+    return loss

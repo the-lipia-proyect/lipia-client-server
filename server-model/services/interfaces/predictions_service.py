@@ -25,3 +25,7 @@ class IPredictionsService(ABC):
         self, req: GetPredictionCompressedRequestDto
     ) -> GetPredictionResponseDto:
         pass
+
+    @abstractmethod
+    def predict_lipnet(self, req: GetPredictionRequestDto) -> GetPredictionResponseDto:
+        pass

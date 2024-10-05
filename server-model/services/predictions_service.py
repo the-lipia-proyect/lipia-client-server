@@ -4,13 +4,24 @@ import json
 
 from flask_injector import inject
 import numpy as np
+import tensorflow as tf
 
 from utils.responses_helper import ok, internal_server_error, bad_request
 from .interfaces.predictions_service import IPredictionsService
-from dtos.get_prediction_response_dto import GetPredictionResponseDto
+from dtos.get_prediction_response_dto import GetPredictionResponseDto, PredictionDto
 from dtos.get_prediction_request_dto import GetPredictionRequestDto
 from dtos.get_prediction_compressed_request_dto import GetPredictionCompressedRequestDto
-from utils.modelutils import load_model, preprocess_frame, translate_prediction
+from dtos.get_lipnet_prediction_request_dto import GetLipnetPredictionRequestDto
+from utils.modelutils import (
+    load_model,
+    preprocess_frame,
+    translate_prediction,
+    get_lipnet_model,
+    CTCLoss,
+    process_frames,
+    TOTAL_FRAMES,
+    NUM_TO_CHAR,
+)
 
 
 class PredictionsService(IPredictionsService):
@@ -179,4 +190,28 @@ class PredictionsService(IPredictionsService):
         prediction = model.predict(loaded_data)
         translated_prediction = translate_prediction(prediction, label_dict)
         response = GetPredictionResponseDto(prediction=translated_prediction)
+        return ok(response)
+
+    def predict_lipnet(
+        self, req: GetLipnetPredictionRequestDto
+    ) -> GetPredictionResponseDto:
+        model = get_lipnet_model()
+        if model is None:
+            return internal_server_error({"message": "Error loading the model"})
+        frames = process_frames(req.frames)
+        yhat = model.predict(tf.expand_dims(frames, axis=0))
+
+        decoder = tf.keras.backend.ctc_decode(yhat, [TOTAL_FRAMES], greedy=True)[0][
+            0
+        ].numpy()
+
+        decoded_prediction = (
+            tf.strings.reduce_join(NUM_TO_CHAR(decoder)).numpy().decode("UTF-8")
+        )
+
+        maxLabel = str(decoded_prediction) if decoded_prediction else "Desconocido"
+
+        response = GetPredictionResponseDto(
+            prediction=PredictionDto(label=maxLabel, probability=1)
+        )
         return ok(response)
