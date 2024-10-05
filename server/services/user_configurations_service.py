@@ -42,6 +42,8 @@ class UserConfigurationService(IUserConfigurationService):
             "facing_mode": "user",
             "playback_rate": 0.5,
             "enable_emergency_phones": False,
+            "interpreter_always_active": False,
+            "mouth_open_threshold": 20,
         }
         if user_configurations:
             user_configurations_values = {
@@ -58,8 +60,13 @@ class UserConfigurationService(IUserConfigurationService):
                 "enable_emergency_phones": user_configurations.get(
                     "enable_emergency_phones", False
                 ),
+                "interpreter_always_active": user_configurations.get(
+                    "interpreter_always_active", False
+                ),
+                "mouth_open_threshold": user_configurations.get(
+                    "mouth_open_threshold", 20
+                ),
             }
-
         response = GetUserConfigurationsResponseDto(
             frame_delay=user_configurations_values["frame_delay"],
             selected_camera=user_configurations_values["selected_camera"],
@@ -74,6 +81,10 @@ class UserConfigurationService(IUserConfigurationService):
             enable_emergency_phones=user_configurations_values[
                 "enable_emergency_phones"
             ],
+            interpreter_always_active=user_configurations_values[
+                "interpreter_always_active"
+            ],
+            mouth_open_threshold=user_configurations_values["mouth_open_threshold"],
         )
         return ok(response)
 

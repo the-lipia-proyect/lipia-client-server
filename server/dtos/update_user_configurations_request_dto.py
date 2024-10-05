@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 
 
 class UpdateUserConfigurationsRequestDto(BaseModel):
-    frame_delay: int = Field(..., ge=1, le=100)
+    frame_delay: int = Field(..., ge=0, le=100)
     selected_voice: str
     selected_camera: str
     stability: float = 0.5
@@ -13,3 +13,5 @@ class UpdateUserConfigurationsRequestDto(BaseModel):
     use_custom_voice: bool
     facing_mode: str = "user"
     enable_emergency_phones: bool = False
+    interpreter_always_active: bool = False
+    mouth_open_threshold: int = 20

@@ -42,6 +42,8 @@ class UserConfigurationRepository:
             "enable_emergency_phones": user_configuration_dto.enable_emergency_phones,
             "created_at": get_utc_timestamp(),
             "updated_at": get_utc_timestamp(),
+            "interpreter_always_active": user_configuration_dto.interpreter_always_active,
+            "mouth_open_threshold": user_configuration_dto.mouth_open_threshold,
         }
         insert_result = self._users_configurations_collection.insert_one(
             new_user_configuration
@@ -67,6 +69,8 @@ class UserConfigurationRepository:
                 "playback_rate": update_user_configuration_dto.playback_rate,
                 "enable_emergency_phones": update_user_configuration_dto.enable_emergency_phones,
                 "updated_at": get_utc_timestamp(),
+                "interpreter_always_active": update_user_configuration_dto.interpreter_always_active,
+                "mouth_open_threshold": update_user_configuration_dto.mouth_open_threshold,
             }
             result = self._users_configurations_collection.update_one(
                 {"_id": id}, {"$set": update_user_configurations_fields}
