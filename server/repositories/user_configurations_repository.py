@@ -44,6 +44,8 @@ class UserConfigurationRepository:
             "updated_at": get_utc_timestamp(),
             "interpreter_always_active": user_configuration_dto.interpreter_always_active,
             "mouth_open_threshold": user_configuration_dto.mouth_open_threshold,
+            "interpreter_compress_frames": user_configuration_dto.interpreter_compress_frames,
+            "use_lipnet_model": user_configuration_dto.use_lipnet_model,
         }
         insert_result = self._users_configurations_collection.insert_one(
             new_user_configuration
@@ -71,6 +73,8 @@ class UserConfigurationRepository:
                 "updated_at": get_utc_timestamp(),
                 "interpreter_always_active": update_user_configuration_dto.interpreter_always_active,
                 "mouth_open_threshold": update_user_configuration_dto.mouth_open_threshold,
+                "interpreter_compress_frames": update_user_configuration_dto.interpreter_compress_frames,
+                "use_lipnet_model": update_user_configuration_dto.use_lipnet_model,
             }
             result = self._users_configurations_collection.update_one(
                 {"_id": id}, {"$set": update_user_configurations_fields}

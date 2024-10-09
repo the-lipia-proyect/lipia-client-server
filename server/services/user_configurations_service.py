@@ -44,6 +44,8 @@ class UserConfigurationService(IUserConfigurationService):
             "enable_emergency_phones": False,
             "interpreter_always_active": False,
             "mouth_open_threshold": 20,
+            "interpreter_compress_frames": False,
+            "use_lipnet_model": False,
         }
         if user_configurations:
             user_configurations_values = {
@@ -66,6 +68,10 @@ class UserConfigurationService(IUserConfigurationService):
                 "mouth_open_threshold": user_configurations.get(
                     "mouth_open_threshold", 20
                 ),
+                "interpreter_compress_frames": user_configurations.get(
+                    "interpreter_compress_frames", False
+                ),
+                "use_lipnet_model": user_configurations.get("use_lipnet_model", False),
             }
         response = GetUserConfigurationsResponseDto(
             frame_delay=user_configurations_values["frame_delay"],
@@ -85,6 +91,10 @@ class UserConfigurationService(IUserConfigurationService):
                 "interpreter_always_active"
             ],
             mouth_open_threshold=user_configurations_values["mouth_open_threshold"],
+            interpreter_compress_frames=user_configurations_values[
+                "interpreter_compress_frames"
+            ],
+            use_lipnet_model=user_configurations_values["use_lipnet_model"],
         )
         return ok(response)
 

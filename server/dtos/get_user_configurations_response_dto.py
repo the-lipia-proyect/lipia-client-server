@@ -15,3 +15,5 @@ class GetUserConfigurationsResponseDto(BaseModel):
     enable_emergency_phones: bool = False
     mouth_open_threshold: int = 20
     interpreter_always_active: bool = False
+    interpreter_compress_frames: bool = False
+    use_lipnet_model: bool = False
