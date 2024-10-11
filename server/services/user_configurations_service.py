@@ -31,7 +31,7 @@ class UserConfigurationService(IUserConfigurationService):
         )
         # default values
         user_configurations_values = {
-            "frame_delay": 10,
+            "frame_delay": 0,
             "selected_camera": "",
             "selected_voice": "",
             "stability": 0.5,
@@ -46,10 +46,12 @@ class UserConfigurationService(IUserConfigurationService):
             "mouth_open_threshold": 20,
             "interpreter_compress_frames": False,
             "use_lipnet_model": False,
+            "use_mediapipe_locally": False,
+            "use_right_arm_landscape": False,
         }
         if user_configurations:
             user_configurations_values = {
-                "frame_delay": user_configurations.get("frame_delay"),
+                "frame_delay": user_configurations.get("frame_delay", 0),
                 "selected_camera": user_configurations.get("selected_camera"),
                 "selected_voice": user_configurations.get("selected_voice"),
                 "stability": user_configurations.get("stability"),
@@ -72,6 +74,12 @@ class UserConfigurationService(IUserConfigurationService):
                     "interpreter_compress_frames", False
                 ),
                 "use_lipnet_model": user_configurations.get("use_lipnet_model", False),
+                "use_mediapipe_locally": user_configurations.get(
+                    "use_mediapipe_locally", False
+                ),
+                "use_right_arm_landscape": user_configurations.get(
+                    "use_right_arm_landscape", False
+                ),
             }
         response = GetUserConfigurationsResponseDto(
             frame_delay=user_configurations_values["frame_delay"],
@@ -95,6 +103,10 @@ class UserConfigurationService(IUserConfigurationService):
                 "interpreter_compress_frames"
             ],
             use_lipnet_model=user_configurations_values["use_lipnet_model"],
+            use_mediapipe_locally=user_configurations_values["use_mediapipe_locally"],
+            use_right_arm_landscape=user_configurations_values[
+                "use_right_arm_landscape"
+            ],
         )
         return ok(response)
 

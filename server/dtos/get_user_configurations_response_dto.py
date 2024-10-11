@@ -17,3 +17,5 @@ class GetUserConfigurationsResponseDto(BaseModel):
     interpreter_always_active: bool = False
     interpreter_compress_frames: bool = False
     use_lipnet_model: bool = False
+    use_mediapipe_locally: bool = False
+    use_right_arm_landscape: bool = False
