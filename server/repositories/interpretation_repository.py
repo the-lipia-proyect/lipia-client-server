@@ -49,6 +49,7 @@ class InterpretationRepository:
             "word": {
                 "prediction": interpretation.word.prediction,
                 "order": interpretation.word.order,
+                "frames": interpretation.word.frames,
             },
             "phrase_group": interpretation.phrase_group,
             "user_id": interpretation.user_id,
@@ -66,15 +67,17 @@ class InterpretationRepository:
     ):
         try:
             update_interpretation_fields = {
-                "word": {
-                    "prediction": interpretation.word.prediction,
-                    "order": interpretation.word.order,
-                },
                 "phrase_group": interpretation.phrase_group,
                 "user_id": interpretation.user_id,
                 "note": interpretation.note,
                 "updated_at": get_utc_timestamp(),
             }
+            if interpretation.word:
+                update_interpretation_fields["word"] = {
+                    "prediction": interpretation.word.prediction,
+                    "order": interpretation.word.order,
+                    "frames": interpretation.word.frames,
+                }
             result = self._interpretations_collection.update_one(
                 {"_id": ObjectId(id)}, {"$set": update_interpretation_fields}
             )

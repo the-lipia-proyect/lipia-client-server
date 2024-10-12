@@ -81,9 +81,9 @@ class InterpretationService(IInterpretationService):
         existing_interpretation = self._interpretation_repository.get_by_id(id)
         if not existing_interpretation:
             return not_found({"message": "The interpretation does not exist"})
-        word = existing_interpretation.get("word")
+        # word = existing_interpretation.get("word")
         updated_interpretation = Interpretation(
-            word=word,
+            # word=word,
             user_id=existing_interpretation.get("user_id"),
             note=req.note,
             phrase_group=existing_interpretation.get("phrase_group"),
@@ -100,5 +100,6 @@ class InterpretationService(IInterpretationService):
             created_at=existing_interpretation.get("created_at"),
             updated_at=existing_interpretation.get("updated_at"),
             note=existing_interpretation.get("note") or "",
+            frames=existing_interpretation.get("word", {}).get("frames", []),
         )
         return ok(response)

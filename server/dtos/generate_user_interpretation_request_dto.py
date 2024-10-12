@@ -5,6 +5,7 @@ from typing import Any
 class WordDto(BaseModel):
     prediction: str
     order: int
+    frames: Any = None
 
 
 class GenerateUserInterpretationRequestDto(BaseModel):
