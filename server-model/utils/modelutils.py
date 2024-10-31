@@ -156,6 +156,31 @@ def get_cmodel_2110_v2():
     }
 
 
+def get_cmodel_2310():
+    model = tf.keras.models.load_model("./model/cmodel_x19_todos_2310_menosmati.h5")
+    return model, {
+        0: "adriano",
+        1: "bueno",
+        2: "chau",
+        3: "como",
+        4: "es",
+        5: "estas",
+        6: "esto",
+        7: "ezequiel",
+        8: "gabriel",
+        9: "hola",
+        10: "matias",
+        11: "prueba",
+        12: "rodrigo",
+        13: "sil",
+        14: "sos",
+        15: "soy",
+        16: "una",
+        17: "vos",
+        18: "yo",
+    }
+
+
 def get_lipnet_model():
     model = Sequential()
     model.add(Input(shape=(44, LIP_HEIGHT, LIP_WIDTH, CHANNELS)))
@@ -197,9 +222,17 @@ MODELS = {
     "CMODEL_2509": get_cmodel_2509(),
     "CMODEL_2110": get_cmodel_2110(),
     "CMODEL_2110_V2": get_cmodel_2110_v2(),
+    "CMODEL_2310": get_cmodel_2310(),
 }
 
-VALID_MODELS = ["CMODEL", "CMODEL_RGB", "CMODEL_2509", "CMODEL_2110", "CMODEL_2110_V2"]
+VALID_MODELS = [
+    "CMODEL",
+    "CMODEL_RGB",
+    "CMODEL_2509",
+    "CMODEL_2110",
+    "CMODEL_2110_V2",
+    "CMODEL_2310",
+]
 
 
 def load_model(model: str = "CMODEL_RGB"):
