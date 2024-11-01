@@ -49,7 +49,6 @@ class InterpretationRepository:
             "word": {
                 "prediction": interpretation.word.prediction,
                 "order": interpretation.word.order,
-                "frames": interpretation.word.frames,
             },
             "phrase_group": interpretation.phrase_group,
             "user_id": interpretation.user_id,
@@ -76,7 +75,6 @@ class InterpretationRepository:
                 update_interpretation_fields["word"] = {
                     "prediction": interpretation.word.prediction,
                     "order": interpretation.word.order,
-                    "frames": interpretation.word.frames,
                 }
             result = self._interpretations_collection.update_one(
                 {"_id": ObjectId(id)}, {"$set": update_interpretation_fields}

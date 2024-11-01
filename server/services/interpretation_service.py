@@ -4,6 +4,9 @@ from flask_injector import inject
 
 from utils.responses_helper import ok, not_found
 from repositories.interpretation_repository import InterpretationRepository
+from repositories.interpretation_details_repository import (
+    InterpretationDetailsRepository,
+)
 from .interfaces.cognito_service import ICognitoService
 from .interfaces.interpretation_service import IInterpretationService
 from dtos.generate_user_interpretation_request_dto import (
@@ -21,6 +24,7 @@ from dtos.update_interpretation_note_request_dto import (
 )
 from dtos.get_interpretation_by_id_response import GetInterpretationByIdResponseDto
 from database.collection_models.interpretation_model import Interpretation, WordDto
+from database.collection_models.interpretation_detail_model import InterpretationDetail
 
 
 class InterpretationService(IInterpretationService):
@@ -29,9 +33,11 @@ class InterpretationService(IInterpretationService):
         self,
         cognito_service: ICognitoService,
         interpretation_repository: InterpretationRepository,
+        interpretation_details_repository: InterpretationDetailsRepository,
     ):
         self._cognito_service = cognito_service
         self._interpretation_repository = interpretation_repository
+        self._interpretation_details_repository = interpretation_details_repository
 
     def get_user_history(
         self,
@@ -72,6 +78,12 @@ class InterpretationService(IInterpretationService):
             word=word_dict, user_id=user_id, phrase_group=req.phrase_group
         )
         db_id_result = self._interpretation_repository.insert(interpretation)
+        insert_interpretation_detail_request = InterpretationDetail(
+            id=db_id_result, frames=req.word.frames
+        )
+        self._interpretation_details_repository.insert(
+            insert_interpretation_detail_request
+        )
         response = GenerateUserInterpretationResponseDto(id=db_id_result)
         return ok(response)
 
@@ -94,12 +106,17 @@ class InterpretationService(IInterpretationService):
     def get_interpretation_by_id(self, id: str) -> GetInterpretationByIdResponseDto:
         existing_interpretation = self._interpretation_repository.get_by_id(id)
         if not existing_interpretation:
-            return not_found({"message": "The shortcut does not exist"})
+            return not_found({"message": "The interpretation does not exist"})
+        existing_interpretation_detail = (
+            self._interpretation_details_repository.get_by_id(id)
+        )
+        if not existing_interpretation_detail:
+            return not_found({"message": "The interpretation detail does not exist"})
         response = GetInterpretationByIdResponseDto(
             id=str(existing_interpretation.get("_id")),
             created_at=existing_interpretation.get("created_at"),
             updated_at=existing_interpretation.get("updated_at"),
             note=existing_interpretation.get("note") or "",
-            frames=existing_interpretation.get("word", {}).get("frames", []),
+            frames=existing_interpretation_detail.get("frames", []),
         )
         return ok(response)
