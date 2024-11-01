@@ -56,31 +56,6 @@ def get_cmodel():
     }
 
 
-def get_cmodel_rgb():
-    model = tf.keras.models.load_model("./model/cmodel_p1_p2_1707_2003.h5")
-    return model, {
-        0: "adriano",
-        1: "bueno",
-        2: "chau",
-        3: "como",
-        4: "es",
-        5: "estas",
-        6: "esto",
-        7: "ezequiel",
-        8: "gabriel",
-        9: "hola",
-        10: "matias",
-        11: "prueba",
-        12: "rodrigo",
-        13: "sil",
-        14: "sos",
-        15: "soy",
-        16: "una",
-        17: "vos",
-        18: "yo",
-    }
-
-
 def get_cmodel_2509():
     model = tf.keras.models.load_model("./model/cmodel_x19_full_2509_2035.h5")
     return model, {
@@ -181,6 +156,85 @@ def get_cmodel_2310():
     }
 
 
+def get_cmodel_2510():
+    model = tf.keras.models.load_model(
+        "./model/2510_todos_desde0_con_finetunning_todos.h5"
+    )
+    return model, {
+        0: "adriano",
+        1: "bueno",
+        2: "chau",
+        3: "como",
+        4: "es",
+        5: "estas",
+        6: "esto",
+        7: "ezequiel",
+        8: "gabriel",
+        9: "hola",
+        10: "matias",
+        11: "prueba",
+        12: "rodrigo",
+        13: "sil",
+        14: "sos",
+        15: "soy",
+        16: "una",
+        17: "vos",
+        18: "yo",
+    }
+
+
+def get_cmodel_2810():
+    model = tf.keras.models.load_model("./model/2810_todos_desde0_sin_finetunning.h5")
+    return model, {
+        0: "adriano",
+        1: "bueno",
+        2: "chau",
+        3: "como",
+        4: "es",
+        5: "estas",
+        6: "esto",
+        7: "ezequiel",
+        8: "gabriel",
+        9: "hola",
+        10: "matias",
+        11: "prueba",
+        12: "rodrigo",
+        13: "sil",
+        14: "sos",
+        15: "soy",
+        16: "una",
+        17: "vos",
+        18: "yo",
+    }
+
+
+def get_cmodel_2910():
+    model = tf.keras.models.load_model(
+        "./model/2910_todos_desde0_con_finetunning_todos.h5"
+    )
+    return model, {
+        0: "adriano",
+        1: "bueno",
+        2: "chau",
+        3: "como",
+        4: "es",
+        5: "estas",
+        6: "esto",
+        7: "ezequiel",
+        8: "gabriel",
+        9: "hola",
+        10: "matias",
+        11: "prueba",
+        12: "rodrigo",
+        13: "sil",
+        14: "sos",
+        15: "soy",
+        16: "una",
+        17: "vos",
+        18: "yo",
+    }
+
+
 def get_lipnet_model():
     model = Sequential()
     model.add(Input(shape=(44, LIP_HEIGHT, LIP_WIDTH, CHANNELS)))
@@ -218,24 +272,28 @@ def get_lipnet_model():
 
 MODELS = {
     "CMODEL": get_cmodel(),
-    "CMODEL_RGB": get_cmodel_rgb(),
     "CMODEL_2509": get_cmodel_2509(),
     "CMODEL_2110": get_cmodel_2110(),
     "CMODEL_2110_V2": get_cmodel_2110_v2(),
     "CMODEL_2310": get_cmodel_2310(),
+    "CMODEL_2510": get_cmodel_2510(),
+    "CMODEL_2810": get_cmodel_2810(),
+    "CMODEL_2910": get_cmodel_2910(),
 }
 
 VALID_MODELS = [
     "CMODEL",
-    "CMODEL_RGB",
     "CMODEL_2509",
     "CMODEL_2110",
     "CMODEL_2110_V2",
     "CMODEL_2310",
+    "CMODEL_2510",
+    "CMODEL_2810",
+    "CMODEL_2910",
 ]
 
 
-def load_model(model: str = "CMODEL_RGB"):
+def load_model(model: str = "CMODEL"):
     model = model.upper()
     with tf.device("/cpu:0"):
         if model not in VALID_MODELS:
