@@ -48,6 +48,8 @@ class UserConfigurationRepository:
             "use_lipnet_model": user_configuration_dto.use_lipnet_model,
             "use_mediapipe_locally": user_configuration_dto.use_mediapipe_locally,
             "use_right_arm_landscape": user_configuration_dto.use_right_arm_landscape,
+            "log_info": user_configuration_dto.log_info,
+            "selected_model": user_configuration_dto.selected_model,
         }
         insert_result = self._users_configurations_collection.insert_one(
             new_user_configuration
@@ -79,6 +81,8 @@ class UserConfigurationRepository:
                 "use_lipnet_model": update_user_configuration_dto.use_lipnet_model,
                 "use_mediapipe_locally": update_user_configuration_dto.use_mediapipe_locally,
                 "use_right_arm_landscape": update_user_configuration_dto.use_right_arm_landscape,
+                "log_info": update_user_configuration_dto.log_info,
+                "selected_model": update_user_configuration_dto.selected_model,
             }
             result = self._users_configurations_collection.update_one(
                 {"_id": id}, {"$set": update_user_configurations_fields}

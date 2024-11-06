@@ -48,6 +48,8 @@ class UserConfigurationService(IUserConfigurationService):
             "use_lipnet_model": False,
             "use_mediapipe_locally": False,
             "use_right_arm_landscape": False,
+            "log_info": False,
+            "selected_model": "CMODEL",
         }
         if user_configurations:
             user_configurations_values = {
@@ -80,6 +82,8 @@ class UserConfigurationService(IUserConfigurationService):
                 "use_right_arm_landscape": user_configurations.get(
                     "use_right_arm_landscape", False
                 ),
+                "log_info": user_configurations.get("log_info", False),
+                "selected_model": user_configurations.get("selected_model", "CMODEL"),
             }
         response = GetUserConfigurationsResponseDto(
             frame_delay=user_configurations_values["frame_delay"],
@@ -107,6 +111,8 @@ class UserConfigurationService(IUserConfigurationService):
             use_right_arm_landscape=user_configurations_values[
                 "use_right_arm_landscape"
             ],
+            log_info=user_configurations_values["log_info"],
+            selected_model=user_configurations_values["selected_model"],
         )
         return ok(response)
 

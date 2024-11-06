@@ -19,3 +19,5 @@ class GetUserConfigurationsResponseDto(BaseModel):
     use_lipnet_model: bool = False
     use_mediapipe_locally: bool = False
     use_right_arm_landscape: bool = False
+    log_info: bool = False
+    selected_model: str = "CMODEL"

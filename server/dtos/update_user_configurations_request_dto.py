@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field
+from typing import Literal
 
 
 class UpdateUserConfigurationsRequestDto(BaseModel):
@@ -19,3 +20,14 @@ class UpdateUserConfigurationsRequestDto(BaseModel):
     use_lipnet_model: bool = False
     use_mediapipe_locally: bool = False
     use_right_arm_landscape: bool = False
+    log_info: bool = False
+    selected_model: Literal[
+        "CMODEL",
+        "CMODEL_2509",
+        "CMODEL_2110",
+        "CMODEL_2110_V2",
+        "CMODEL_2310",
+        "CMODEL_2510",
+        "CMODEL_2810",
+        "CMODEL_2910",
+    ] = "CMODEL"
