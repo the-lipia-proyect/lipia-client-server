@@ -8,7 +8,11 @@ from dotenv import load_dotenv
 from flask_injector import FlaskInjector
 
 from services.dependency_injector import configure_di
-from controllers import health_controller, predictions_controller
+from controllers import (
+    health_controller,
+    predictions_controller,
+    available_models_controller,
+)
 
 load_dotenv()
 
@@ -32,6 +36,7 @@ cognito = CognitoAuth(app)
 models_bp = Blueprint("models", __name__, url_prefix=f"/api/{API_VERSION}/models")
 models_bp.register_blueprint(health_controller.bp)
 models_bp.register_blueprint(predictions_controller.bp)
+models_bp.register_blueprint(available_models_controller.bp)
 app.register_blueprint(models_bp)
 FlaskInjector(app=app, modules=[configure_di])
 

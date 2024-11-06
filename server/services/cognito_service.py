@@ -68,7 +68,7 @@ class CognitoService(ICognitoService):
             return signup_response["UserSub"]
         except ClientError as error:
             if error.response["Error"]["Code"] == "UsernameExistsException":
-                raise ValueError("Email already exists")
+                raise ValueError("Username already exists")
             else:
                 raise error
 
