@@ -32,7 +32,8 @@ app.config.update(
     }
 )
 CORS(app)
-cognito = CognitoAuth(app)
+
+# cognito = CognitoAuth(app)
 models_bp = Blueprint("models", __name__, url_prefix=f"/api/{API_VERSION}/models")
 models_bp.register_blueprint(health_controller.bp)
 models_bp.register_blueprint(predictions_controller.bp)

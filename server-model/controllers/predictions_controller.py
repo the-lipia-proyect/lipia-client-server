@@ -16,7 +16,7 @@ bp = Blueprint("predictions", __name__, url_prefix="/predictions")
 
 
 @bp.route(None, methods=[http.HTTPMethod.POST])
-@cognito_auth_required
+# @cognito_auth_required
 @inject
 def post_predictions(predictions_service: IPredictionsService):
     try:
@@ -30,7 +30,7 @@ def post_predictions(predictions_service: IPredictionsService):
 
 
 @bp.route("/compressed", methods=[http.HTTPMethod.POST])
-@cognito_auth_required
+# @cognito_auth_required
 @inject
 def post_predictions_compressed(predictions_service: IPredictionsService):
     try:
@@ -44,7 +44,7 @@ def post_predictions_compressed(predictions_service: IPredictionsService):
 
 
 @bp.route("/opencv", methods=[http.HTTPMethod.POST])
-@cognito_auth_required
+# @cognito_auth_required
 @inject
 def post_predictions_opencv(predictions_service: IPredictionsService):
     try:
@@ -58,7 +58,7 @@ def post_predictions_opencv(predictions_service: IPredictionsService):
 
 
 @bp.route("/compressed/opencv", methods=[http.HTTPMethod.POST])
-@cognito_auth_required
+# @cognito_auth_required
 @inject
 def post_predictions_compressed_opencv(predictions_service: IPredictionsService):
     try:
@@ -72,7 +72,7 @@ def post_predictions_compressed_opencv(predictions_service: IPredictionsService)
 
 
 @bp.route("/lipnet", methods=[http.HTTPMethod.POST])
-@cognito_auth_required
+# @cognito_auth_required
 @inject
 def post_predictions_lipnet(predictions_service: IPredictionsService):
     try:
@@ -87,7 +87,7 @@ def post_predictions_lipnet(predictions_service: IPredictionsService):
 
 # TODO: Analyze if this endpoint is necessary
 # @bp.route("/stream", methods=[http.HTTPMethod.POST])
-# @cognito_auth_required
+# # @cognito_auth_required
 # @inject
 # def post_predictions_stream(predictions_service: IPredictionsService):
 #     try:

@@ -13,7 +13,7 @@ bp = Blueprint("available_models", __name__, url_prefix="/available-models")
 
 
 @bp.route(None, methods=[http.HTTPMethod.GET])
-@cognito_auth_required
+# @cognito_auth_required
 @inject
 def get_available_models(available_models_service: IAvailableModelsService):
     try:
