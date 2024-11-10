@@ -16,3 +16,7 @@ checkpoint_5palabras_x21_v_y_h_ch_b.h5 y checkpoint_5palabras_x21_v_y_h_ch_b_mat
 #Activar un ambiente virtual con: .venv/Scripts/activate
 #Instalar las dependencias con : pip install -r requirements.txt
 #ejecutar app con : python app.py
+
+Una vez instalado solo correr
+.venv/Scripts/activate
+python app.py
